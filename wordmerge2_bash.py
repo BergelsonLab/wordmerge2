@@ -1,6 +1,7 @@
 import sys
 import os
 import csv
+import re
 import wordmerge2 as wm2
 import datetime
 
