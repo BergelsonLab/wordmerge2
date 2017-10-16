@@ -1,2 +1,3 @@
 # ignore anything inside data folder
 /data
+.DS_Store
