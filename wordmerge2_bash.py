@@ -32,16 +32,16 @@ def runWordmerge2(old_folder, new_folder):
 
 #get prefix from full path file
 def getdates(file):
-	pathList = file.split("/")
+	pathList = re.split("\\\|/", file) #file.split("/")
 	fileName = pathList[-1]
-	dateList = fileName.split("_")
+	dateList = re.split("\\\|/", fileName) #fileName.split("_")
 	date = dateList[0] + "_" + dateList[1]
 	return date
 
 #print out log file
 def writeLog(new_folder, fixCount, caseCount, timeCount):
 	countRow = [fixCount, caseCount, timeCount]
-	pathList = new_folder.split("/")
+	pathList = re.split("\\\|/", new_folder) #new_folder.split("/")
 	now = datetime.datetime.now()
 	currentD = datetime.date(now.year, now.month, now.day)
 	fileName = currentD.isoformat() + "_count_log.csv"
