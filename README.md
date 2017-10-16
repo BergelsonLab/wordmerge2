@@ -1,12 +1,14 @@
 # wordmerge2
 
-This is a repo for wordmerge2 python script and its folder version that merge basic level from old file to new file. 
+This is a repo for wordmerge2 python script and its folder version that merges basic level from old file to new file in a newly-generated csv file. 
 
 - Both can be run directly in terminal or command line using python 2. 
 - Both scripts require `pandas` python package installed.
 - In order to run `wordmerge2_bash.py`, you need to have `wordmerge2.py` in the same folder. 
 - In order to run `wordmerge2_bash.py` and `wordmerge2.py`, you need to have `common_words_index.csv` in the same folder. 
 ----
+## wordmerge2.py
+
 For `wordmerge2.py`, it accepts five inputs: *old_file*, *new_file*, *new_file_writeTo*, *delta* and *mark*
 
 A new csv file would be generated as the merged version with the name `prefix_wordmerged.csv`, with prefix from the file pair. 
@@ -31,7 +33,8 @@ If the script does not recieve the fourth and fifth input, *delta* and *mark* wo
   * The default value for *mark* is `True`. 
   
 ---
-For `wordmerge2_bash.py`, it accept two inputs: *old_folder* and *new_folder*
+## wordmerge2_bash.py
+For `wordmerge2_bash.py`, it accepts two inputs: *old_folder* and *new_folder*
 
 This script runs `wordmerge2.py` for every pair of files that have the same prefix inside the old folder and prints new csv files to the new folder. 
 
