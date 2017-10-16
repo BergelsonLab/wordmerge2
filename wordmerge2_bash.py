@@ -35,7 +35,7 @@ def runWordmerge2(old_folder, new_folder):
 def getdates(file):
 	pathList = re.split("\\\|/", file) #file.split("/")
 	fileName = pathList[-1]
-	dateList = re.split("\\\|/", fileName) #fileName.split("_")
+	dateList = fileName.split("_")
 	date = dateList[0] + "_" + dateList[1]
 	return date
 
