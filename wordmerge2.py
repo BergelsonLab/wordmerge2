@@ -1,5 +1,6 @@
 import sys
 import csv
+import re
 import pandas as pd
 
 #merge function rewrites the new_file with basic_level column 
@@ -48,7 +49,7 @@ def cleanBL(df, colname):
 
 #get new_file_writeTo path
 def newpath(new_file, new_file_writeTo):
-	pathList = new_file.split("/")
+	pathList = re.split("/ | \\", new file)  #new_file.split("/")
 	newpathList = new_file_writeTo.split("/")
 	fileName = pathList[-1]
 	dateList = fileName.split("_")
