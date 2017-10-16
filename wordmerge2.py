@@ -49,7 +49,8 @@ def cleanBL(df, colname):
 
 #get new_file_writeTo path
 def newpath(new_file, new_file_writeTo):
-	pathList = re.split("/ | \\", new file)  #new_file.split("/")
+	pathList = re.split('\\\|/', new_file)  #new_file.split("/")
+	print pathList
 	newpathList = new_file_writeTo.split("/")
 	fileName = pathList[-1]
 	dateList = fileName.split("_")
