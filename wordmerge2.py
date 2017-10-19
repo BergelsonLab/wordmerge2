@@ -1,6 +1,5 @@
 import sys
 import csv
-import re
 import pandas as pd
 
 #merge function rewrites the new_file with basic_level column 
@@ -12,8 +11,8 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
     clean(new_file)
     clean(old_file)
 
-    df_old = pd.read_csv(old_file, header = 0)
-    df_new = pd.read_csv(new_file, header = 0)
+    df_old = pd.read_csv(old_file, header = 0, keep_default_na=False)
+    df_new = pd.read_csv(new_file, header = 0, keep_default_na=False)
     #df_old["basic_level"] = df_old["basic_level"].astype(str)
     #df_new["basic_level"] = df_new["basic_level"].astype(str)
     common_file = "common_words_index.csv"
@@ -49,8 +48,8 @@ def cleanBL(df, colname):
 
 #get new_file_writeTo path
 def newpath(new_file, new_file_writeTo):
-	pathList = re.split('\\\|/', new_file)  #new_file.split("/") s
-	newpathList = re.split("\\\|/", new_file_writeTo) #new_file_writeTo.split("/")
+	pathList = new_file.split("/")
+	newpathList = new_file_writeTo.split("/")
 	fileName = pathList[-1]
 	dateList = fileName.split("_")
 	date = dateList[0] + "_" + dateList[1] + "_wordmerged.csv"
