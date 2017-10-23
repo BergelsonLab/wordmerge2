@@ -157,7 +157,7 @@ def check_speaker_audio(speaker, line_number):
 
 def check_timestamp_audio(timestamp, line_number):
     try:
-        assert(timestamp.contains("_")
+        assert(timestamp.contains("_"))
     except AssertionError:
         error_log.append("Timestamp does not contain an underscore in line " + line_number)
 
