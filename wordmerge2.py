@@ -46,13 +46,24 @@ def printError(new_error, old_error):
 	new_errorCount = len(new_error)
 	old_errorCount = len(old_error)
 
-	old_errorMsg = repr(old_errorCount) + "error(s) are detected in the old file:" + nl
+	old_errorMsg = repr(old_errorCount) + " error(s) are detected in the old file:" + nl
 	for error in old_error:
 		old_errorMsg = old_errorMsg + error + nl
-	new_errorMsg = repr(new_errorCount) + "error(s) are detected in the new file:" + nl
+	new_errorMsg = repr(new_errorCount) + " error(s) are detected in the new file:" + nl
 	for error in new_error:
 		new_errorMsg = new_errorMsg + error + nl
-	logMsg = "All errors recorded in the log file."
+	logMsg = "All errors recorded in the log file, log.txt." + nl
+
+        with open("log.txt", 'w') as writefile:
+            writefile.write("Old file errors: " + nl)
+            for x in range(len(old_error)):
+                writefile.write(old_error[x] + nl)
+            writefile.write(nl + "New file errors: " + nl)
+            for y in range(len(new_error)):
+                writefile.write(new_error[y] + nl)
+        writefile.close()
+                
+	
 	print alert + old_errorMsg + new_errorMsg + logMsg + alert
 
 #get NA list
