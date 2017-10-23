@@ -82,9 +82,9 @@ def clean(file):
 		for row in rowlist:
 			if row[-1] == "":
 				del row[-1]
-		# for i in range(len(rowlist[0])):
-		# 	if rowlist[0][i] == "labeled_object.basic_level":
-		# 		rowlist[0][i] = "basic_level"
+		if "basic_level" not in rowlist[0]:
+			if "labeled_object.basic_level" not in rowlist[0]:
+				rowlist[0].append('basic_level')
 	with open(file, 'wb') as writefile:
 		writer = csv.writer(writefile)
 		for n in rowlist:
