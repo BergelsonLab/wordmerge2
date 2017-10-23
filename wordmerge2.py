@@ -1,6 +1,7 @@
 import sys
 import csv
 import pandas as pd
+import checker
 
 #merge function rewrites the new_file with basic_level column 
 #from old_file and returns dataframe of new_file
@@ -21,10 +22,16 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
     	df_old = cleanBL(df_old, "basic_level")
     	df_new = cleanBL(df_new, "basic_level")
     	df_new, fixCount, caseCount, timeCount = getBasicAudio(df_old, df_new, mark, delta, commonList)
+	#Checking for errors for video file
+	new_error = checker.give_error_report_video(new_file)
+	old_error = checker.give_error_report_video(old_file)
     else:
     	df_old = cleanBL(df_old, "labeled_object.basic_level")
     	df_new = cleanBL(df_new, "labeled_object.basic_level")
     	df_new, fixCount, caseCount, timeCount = getBasicVideo(df_old, df_new, mark, delta, commonList)
+	#Checking for errors for audio file
+	new_error = checker.give_error_report_audio(new_file)
+	old_error = checker.give_error_report_audio(old_file)
 
     newFileName = newpath(new_file, new_file_writeTo)
     df_new.to_csv(newFileName, index = False)
@@ -240,3 +247,4 @@ if __name__ == "__main__":
 		mark = sys.argv[5].lower() == "true"
 
 	merge(old_file, new_file, new_file_writeTo, delta, mark)
+	printError(new_error, old_error)
