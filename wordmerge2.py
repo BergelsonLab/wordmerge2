@@ -13,10 +13,10 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
 
     df_old = pd.read_csv(old_file, header = 0, keep_default_na=False)
     df_new = pd.read_csv(new_file, header = 0, keep_default_na=False)
-    #df_old["basic_level"] = df_old["basic_level"].astype(str)
-    #df_new["basic_level"] = df_new["basic_level"].astype(str)
+
     common_file = "common_words_index.csv"
     commonList = commonNA(common_file)
+
     if "word" in list(df_old):
     	df_old = cleanBL(df_old, "basic_level")
     	df_new = cleanBL(df_new, "basic_level")
@@ -25,9 +25,19 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
     	df_old = cleanBL(df_old, "labeled_object.basic_level")
     	df_new = cleanBL(df_new, "labeled_object.basic_level")
     	df_new, fixCount, caseCount, timeCount = getBasicVideo(df_old, df_new, mark, delta, commonList)
+
     newFileName = newpath(new_file, new_file_writeTo)
     df_new.to_csv(newFileName, index = False)
+
     return fixCount, caseCount, timeCount
+
+def printError(new_errorCount, old_errorCount):
+	astrick = "********************************************************************"
+	nl = "\n"
+	old_errorMsg = repr(old_errorCount) + "error(s) are detected in the old file;"
+	new_errorMsg = repr(new_errorCount) + "error(s) are detected in the new file."
+	logMsg = "Please see log file for detailed error message."
+	print astrick + nl + astrick + nl + old_errorMsg + nl + new_errorMsg + nl + logMsg + nl + astrick + nl + astrick + nl
 
 #get NA list
 def commonNA(common_file):
