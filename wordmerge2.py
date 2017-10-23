@@ -31,13 +31,21 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
 
     return fixCount, caseCount, timeCount
 
-def printError(new_errorCount, old_errorCount):
+def printError(new_error, old_error):
 	astrick = "********************************************************************"
 	nl = "\n"
-	old_errorMsg = repr(old_errorCount) + "error(s) are detected in the old file;"
-	new_errorMsg = repr(new_errorCount) + "error(s) are detected in the new file."
-	logMsg = "Please see log file for detailed error message."
-	print astrick + nl + astrick + nl + old_errorMsg + nl + new_errorMsg + nl + logMsg + nl + astrick + nl + astrick + nl
+	alert = astrick + nl + astrick + nl
+	new_errorCount = len(new_error)
+	old_errorCount = len(old_error)
+
+	old_errorMsg = repr(old_errorCount) + "error(s) are detected in the old file:" + nl
+	for error in old_error:
+		old_errorMsg = old_errorMsg + error + nl
+	new_errorMsg = repr(new_errorCount) + "error(s) are detected in the new file:" + nl
+	for error in new_error:
+		new_errorMsg = new_errorMsg + error + nl
+	logMsg = "All errors recorded in the log file."
+	print alert + old_errorMsg + new_errorMsg + logMsg + alert
 
 #get NA list
 def commonNA(common_file):
