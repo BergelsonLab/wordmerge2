@@ -4,5 +4,4 @@
 .DS_Store
 *.csv
 !common_words_index.csv
-!speakerC.csv
 *.pyc
