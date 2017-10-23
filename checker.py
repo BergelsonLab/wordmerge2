@@ -73,11 +73,13 @@ def check_object_present_video(obj_pres, line_number):
 
 
 def check_speaker_video(speaker, line_number):
+    if not len(speaker) == 3:
+        error_log.append("Speaker code invalid length in line " + line_number)
     for char in speaker:
         try:
             assert (char.isalpha() and char.isupper())
         except:
-            error_log.append("Speaker code invalid in line " + line_number)
+            error_log.append("Speaker code contains invalid character in line " + line_number)
 
 
 def check_basic_level_video(basic_level, line_number):
