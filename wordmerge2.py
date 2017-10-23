@@ -238,13 +238,16 @@ if __name__ == "__main__":
 	delta = 0
 	mark = True
 
-	old_file = sys.argv[0]
-	new_file = sys.argv[1]
-	new_file_writeTo = sys.argv[2]
-	if len(sys.argv) >= 4:
-		delta = int(sys.argv[3])
+	print(sys.argv[1])
+	print(sys.argv[2])
+
+	old_file = sys.argv[1]
+	new_file = sys.argv[2]
+	new_file_writeTo = sys.argv[3]
 	if len(sys.argv) >= 5:
-		mark = sys.argv[4].lower() == "true"
+		delta = int(sys.argv[4])
+	if len(sys.argv) >= 6:
+		mark = sys.argv[5].lower() == "true"
 
 	merge(old_file, new_file, new_file_writeTo, delta, mark)
 	printError(new_error, old_error)
