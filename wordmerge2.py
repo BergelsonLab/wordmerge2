@@ -18,6 +18,7 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
     common_file = "common_words_index.csv"
     commonList = commonNA(common_file)
 
+
     if "word" in list(df_old):
     	df_old = cleanBL(df_old, "basic_level")
     	df_new = cleanBL(df_new, "basic_level")
@@ -238,8 +239,8 @@ if __name__ == "__main__":
 	delta = 0
 	mark = True
 
-	print(sys.argv[1])
-	print(sys.argv[2])
+	new_error = []
+        old_error = []
 
 	old_file = sys.argv[1]
 	new_file = sys.argv[2]
