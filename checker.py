@@ -59,14 +59,14 @@ def check_object_video(obj, line_number):
 def check_utterance_type_video(utterance_type, line_number):
     try:
         assert (utterance_type in acceptable_utterance_types)
-    except:
+    except AssertionError:
         error_log.append("Utterance type invalid in line " + line_number)
 
 
 def check_object_present_video(obj_pres, line_number):
     try:
         assert(obj_pres == "y" or obj_pres == "n")
-    except:
+    except AssertionError:
         error_log.append("Object present invalid in line " + line_number)
 
 
@@ -76,7 +76,7 @@ def check_speaker_video(speaker, line_number):
     for char in speaker:
         try:
             assert (char.isalpha() and char.isupper())
-        except:
+        except AssertionError:
             error_log.append("Speaker code contains invalid character in line " + line_number)
 
 
@@ -88,9 +88,9 @@ def check_basic_level_video(basic_level, line_number):
             error_log.append("Basic level contains invalid character in line " + line_number)
 
 
-def give_error_report_video(filename):
+def give_error_report_video(filepath):
     video_info = []
-    with open(filename, 'rt') as csvfileR:
+    with open(filepath, 'rt') as csvfileR:
         reader = csv.reader(csvfileR, delimiter=',', quotechar='|')
         for row in reader:
             video_info.append(row)
@@ -111,38 +111,78 @@ def give_error_report_video(filename):
         line_number += 1
     return error_log
 
+#Functions to check for audio files
 
-def check_tier_audio():
-    return 0
+acceptable_tier = ['*CFP', '*CHF', '*CHN', '*CXF', '*CXN', '*FAF', '*FAN',
+                   '*MAF', '*MAN', '*NON', '*OLF', '*OLN', '*SIL', '*TVF', '*TVN']
 
-
-def check_word_audio():
-    return 0
-
-
-def check_utterance_type_audio():
-    return 0
-
-
-def check_object_present_audio():
-    return 0
+def check_tier_audio(tier, line_number):
+    try:
+        assert(tier in acceptable_utterance_types)
+    except AssertionError:
+        error_log.append("Tier invalid in line " + line_number)
 
 
-def check_speaker_audio():
-    return 0
+def check_word_audio(word, line_number):
+    for char in word:
+        try:
+            assert (char.isalpha() or char == "+" or char == "'")
+        except AssertionError:
+            error_log.append("Word contains invalid character in line " + line_number)
 
 
-def check_timestamp_audio():
-    return 0
+def check_utterance_type_audio(utterance_type, line_number):
+    try:
+        assert (utterance_type in acceptable_utterance_types)
+    except AssertionError:
+        error_log.append("Utterance type invalid in line " + line_number)
 
 
-def check_basic_level_audio():
-    return 0
+def check_object_present_audio(obj_pres, line_number):
+    try:
+        assert(obj_pres == "y" or obj_pres == "n")
+    except AssertionError:
+        error_log.append("Object present invalid in line " + line_number)
 
 
-def give_error_report_audio(filename):
+def check_speaker_audio(speaker, line_number):
+    if not len(speaker) == 3:
+        error_log.append("Speaker code invalid length in line " + line_number)
+    for char in speaker:
+        try:
+            assert (char.isalpha() and char.isupper())
+        except AssertionError:
+            error_log.append("Speaker code contains invalid character in line " + line_number)
+
+
+def check_timestamp_audio(timestamp, line_number):
+    try:
+        assert(timestamp.contains("_")
+    except AssertionError:
+        error_log.append("Timestamp does not contain an underscore in line " + line_number)
+
+    if timestamp.contains("_"):
+        underscore_index = timestamp.find("_")
+        for x in range(len(timestamp)):
+            if x != underscore_index:
+               try:
+                   assert(timestamp[x].isdigit())
+               except AssertionError:
+                   error_log.append("Timestamp has a non-numeric character other than the underscore in line " + line_number)
+               
+    
+
+def check_basic_level_audio(basic_level, line_number):
+    for char in basic_level:
+        try:
+            assert (char.isalpha() or char == "+" or char == "'")
+        except AssertionError:
+            error_log.append("Basic level contains invalid character in line " + line_number)
+
+
+def give_error_report_audio(filepath):
     audio_info = []
-    with open(filename, 'rt') as csvfileR:
+    with open(filepath, 'rt') as csvfileR:
         reader = csv.reader(csvfileR, delimiter=',', quotechar='|')
         for row in reader:
             audio_info.append(row)
