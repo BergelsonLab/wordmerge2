@@ -32,9 +32,9 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
     return fixCount, caseCount, timeCount
 
 def printError(new_error, old_error):
-	astrick = "********************************************************************"
+	asterisk = "********************************************************************"
 	nl = "\n"
-	alert = astrick + nl + astrick + nl
+	alert = asterisk + nl + asterisk + nl
 	new_errorCount = len(new_error)
 	old_errorCount = len(old_error)
 
