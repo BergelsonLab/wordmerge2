@@ -7,7 +7,7 @@ import checker
 #from old_file and returns dataframe of new_file
 #parameters: old file path, new file path, error range allowed for timestemp, 
 def merge(old_file, new_file, new_file_writeTo, delta, mark):
-    print "merging {} --and-- {} .....".format(old_file, new_file)
+    print "\n" + "merging {} --and-- {} .....".format(old_file, new_file) + "\n"
     #clean csv file
     clean(new_file)
     clean(old_file)
@@ -42,7 +42,7 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
 def printError(new_error, old_error):
 	asterisk = "********************************************************************"
 	nl = "\n"
-	alert = asterisk + nl + asterisk + nl
+	alert = nl + asterisk + nl + asterisk + nl
 	new_errorCount = len(new_error)
 	old_errorCount = len(old_error)
 
