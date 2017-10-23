@@ -156,13 +156,13 @@ def check_speaker_audio(speaker, line_number):
 
 
 def check_timestamp_audio(timestamp, line_number):
+    underscore_index = timestamp.find("_")
     try:
-        assert(timestamp.contains("_"))
+        assert(underscore_index != -1)
     except AssertionError:
         error_log.append("Timestamp does not contain an underscore in line " + line_number)
 
-    if timestamp.contains("_"):
-        underscore_index = timestamp.find("_")
+    if underscore_index != -1:
         for x in range(len(timestamp)):
             if x != underscore_index:
                try:
@@ -192,13 +192,13 @@ def give_error_report_audio(filepath):
     line_number = 0
     for row in audio_info:
         if not line_number == 0:
-            check_tier_audio(row[0], line_number)
-            check_word_audio(row[1], line_number)
-            check_utterance_type_audio(row[2], line_number)
-            check_object_present_audio(row[3], line_number)
-            check_speaker_audio(row[4], line_number)
-            check_timestamp_audio(row[5], line_number)
-            check_basic_level_audio(row[6], line_number)
+            check_tier_audio(row[0], str(line_number))
+            check_word_audio(row[1], str(line_number))
+            check_utterance_type_audio(row[2], str(line_number))
+            check_object_present_audio(row[3], str(line_number))
+            check_speaker_audio(row[4], str(line_number))
+            check_timestamp_audio(row[5], str(line_number))
+            check_basic_level_audio(row[6], str(line_number))
         line_number += 1
     return error_log
 
