@@ -8,8 +8,6 @@ ordinal_list = []
 total_lines = 0
 acceptable_utterance_types = ['s', 'n', 'd', 'r', 'q', 'i']
 
-for a in acceptable_speaker:
-    print(a)
 
 def check_ordinal_video(ordinal, line_number):
     #Check for repeat values
@@ -91,8 +89,6 @@ def check_basic_level_video(basic_level, line_number):
 
 
 def give_error_report_video(filename):
-    # Loop through
-    # Each entry is checked with a function above
     video_info = []
     with open(filename, 'rt') as csvfileR:
         reader = csv.reader(csvfileR, delimiter=',', quotechar='|')
@@ -100,18 +96,43 @@ def give_error_report_video(filename):
             video_info.append(row)
     csvfileR.close()
 
+    total_lines = len(video_info)
+    line_number = 0
+    for row in video_info:
+        if not line_number == 0:
+            check_ordinal_video(row[0], line_number)
+            check_onset_video(row[1], line_number)
+            check_offset_video(row[2], line_number)
+            check_object_video(row[3], line_number)
+            check_utterance_type_video(row[4], line_number)
+            check_object_present_video(row[5], line_number)
+            check_speaker_video(row[6], line_number)
+            check_basic_level_video(row[7], line_number)
+        line_number += 1
+    return error_log
+
+
+def check_tier_audio():
     return 0
 
 
 def check_word_audio():
-    return "op"
-
-
-def check_timestamp_audio():
     return 0
 
 
-def check_tier_audio():
+def check_utterance_type_audio():
+    return 0
+
+
+def check_object_present_audio():
+    return 0
+
+
+def check_speaker_audio():
+    return 0
+
+
+def check_timestamp_audio():
     return 0
 
 
@@ -119,7 +140,26 @@ def check_basic_level_audio():
     return 0
 
 
-def give_error_report_audio():
-    return 0
+def give_error_report_audio(filename):
+    audio_info = []
+    with open(filename, 'rt') as csvfileR:
+        reader = csv.reader(csvfileR, delimiter=',', quotechar='|')
+        for row in reader:
+            audio_info.append(row)
+    csvfileR.close()
+
+    total_lines = len(audio_info)
+    line_number = 0
+    for row in audio_info:
+        if not line_number == 0:
+            check_tier_audio(row[0], line_number)
+            check_word_audio(row[1], line_number)
+            check_utterance_type_audio(row[2], line_number)
+            check_object_present_audio(row[3], line_number)
+            check_speaker_audio(row[4], line_number)
+            check_timestamp_audio(row[5], line_number)
+            check_basic_level_audio(row[6], line_number)
+        line_number += 1
+    return error_log
 
 
