@@ -39,11 +39,11 @@ def check_offset_video(offset, line_number, word):
 
 
 def check_object_video(obj, line_number):
-    for char in obj:
-        try:
+    try:
+        for char in obj:
             assert (char.isalpha() or char == "+" or char == "'")
-        except AssertionError:
-            error_log.append([obj, line_number, "labeled_object.object"])
+    except AssertionError:
+        error_log.append([obj, line_number, "labeled_object.object"])
 
 
 def check_utterance_type_video(utterance_type, line_number, word):
@@ -63,9 +63,10 @@ def check_object_present_video(obj_pres, line_number, word):
 def check_speaker_video(speaker, line_number, word):
     if not len(speaker) == 3:
         error_log.append([word, line_number, "labeled_object.speaker"])
-    for char in speaker:
+    else: 
         try:
-            assert (char.isalpha() and char.isupper())
+            for char in speaker:
+                assert (char.isalpha() and char.isupper())
         except AssertionError:
             error_log.append([word, line_number, "labeled_object.speaker"])
 
@@ -137,11 +138,11 @@ def check_tier_audio(tier, line_number, word):
 
 
 def check_word_audio(word, line_number):
-    for char in word:
-        try:
+    try:
+        for char in word:
             assert (char.isalpha() or char == "+" or char == "'")
-        except AssertionError:
-            error_log.append([word, line_number, "word"])
+    except AssertionError:
+        error_log.append([word, line_number, "word"])
 
 
 def check_utterance_type_audio(utterance_type, line_number, word):
@@ -171,18 +172,19 @@ def check_speaker_audio(speaker, line_number,word):
 
 def check_timestamp_audio(timestamp, line_number, word):
     underscore_index = timestamp.find("_")
-    try:
-        assert(underscore_index != -1)
-    except AssertionError:
-        error_log.append([word, line_number, "timestamp"])
 
     if underscore_index != -1:
-        for x in range(len(timestamp)):
-            if x != underscore_index:
-               try:
-                   assert(timestamp[x].isdigit())
-               except AssertionError:
-                   error_log.append([word, line_number, "timestamp"])
+        try:
+            for x in range(len(timestamp)):
+                if x != underscore_index:
+                    assert(timestamp[x].isdigit())
+        except AssertionError:
+            error_log.append([word, line_number, "timestamp"])
+    else:
+        try:
+            assert(underscore_index != -1)
+        except AssertionError:
+            error_log.append([word, line_number, "timestamp"])
                
     
 

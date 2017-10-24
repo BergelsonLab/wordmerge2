@@ -64,7 +64,7 @@ def printError(old_error, new_error, logPath):
 	for error in new_error:
 		errorMsg = error[2] + " in row " + error[1] + " with word \"" + error[0] + "\""
 		new_errorMsg = new_errorMsg + errorMsg + nl
-	logMsg = "All errors recorded in " + logPath + nl
+	logMsg = nl + "All errors recorded in " + logPath + nl
 
 	writeErrorLog(old_error, new_error, logPath)
 	print alert + old_errorMsg + new_errorMsg + logMsg + alert
