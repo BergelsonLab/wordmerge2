@@ -2,19 +2,24 @@ import sys
 import csv
 
 # Functions to check for video files
-
 error_log = []
-ordinal_list = []
-total_lines = 0
 acceptable_utterance_types = ['s', 'n', 'd', 'r', 'q', 'i']
 
+# THERE IS AN ISSUE WITH ROW NUMBERS NOT MATCHING UP PROPERLY
+# It gives the line numbers properly for the new file but not the old file
+# Also, the line numbers for the new file are repeated as the line numbers for the old file
 
-def check_ordinal_video(ordinal, line_number, word):
+def check_ordinal_video(ordinal, line_number, word, total_lines):
+
+    #Having issues with checking for repeat values
+    
     #Check for repeat values
+    '''
     try:
         assert(not (line_number in ordinal_list))
     except AssertionError:
-        error_log.append([word, line_number, "labeled_object.ordinal"])
+        error_log.append([word, line_number, "labeled_object.ordinal repeat"])
+    '''
         
     #Check for non-digit characters
     try:
@@ -27,15 +32,15 @@ def check_ordinal_video(ordinal, line_number, word):
         if y.isdigit():
             digit_list.append(y)
     string_of_digits = ''.join(digit_list)
-    
-    #Check that ordinal value is from 0 to total_lines-2, inclusive
+
+    #Check that the ordinal number is in bounds
     try:
-        assert(int(string_of_digits) >= 0 and int(string_of_digits) <= total_lines - 2)
+        assert(int(string_of_digits) >= 0 and int(string_of_digits) <= total_lines - 1)
     except AssertionError:
         error_log.append([word, line_number, "labeled_object.ordinal"])
 
-    ordinal_list.append(ordinal)
-
+    #ordinal_list.append(ordinal)
+    
 
 def check_onset_video(onset, line_number, word):
     try:
@@ -92,6 +97,7 @@ def check_basic_level_video(basic_level, line_number, word):
 
 
 def give_error_report_video(filepath):
+    ordinal_list = []
     video_info = []
     with open(filepath, 'rt') as csvfileR:
         reader = csv.reader(csvfileR)
@@ -102,7 +108,7 @@ def give_error_report_video(filepath):
     line_number = 1
     for row in video_info:
         if not line_number == 1:
-            check_ordinal_video(row[0], str(line_number), row[3])
+            check_ordinal_video(row[0], str(line_number), row[3], total_lines)
             check_onset_video(row[1], str(line_number), row[3])
             check_offset_video(row[2], str(line_number), row[3])
             check_object_video(row[3], str(line_number))
@@ -193,6 +199,7 @@ def give_error_report_audio(filepath):
     total_lines = len(audio_info)
     line_number = 1
     for row in audio_info:
+        print("line number: " + str(line_number) + " word: " + row[1]) 
         if not line_number == 1:
             check_tier_audio(row[0], str(line_number), row[1])
             check_word_audio(row[1], str(line_number))
