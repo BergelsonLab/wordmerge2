@@ -20,15 +20,17 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
 
     if "word" in list(df_old):
     	#Checking for errors for audio file
-		new_error = checker.give_error_report_audio(new_file)
-		old_error = checker.give_error_report_audio(old_file)
+	new_error = checker.give_error_report_audio(new_file)
+	old_error = checker.give_error_report_audio(old_file)
+	
     	df_old = cleanBL(df_old, "basic_level")
     	df_new = cleanBL(df_new, "basic_level")
     	df_new, fixCount, caseCount, timeCount = getBasicAudio(df_old, df_new, mark, delta, commonList)
     else:
     	#Checking for errors for video file
-		new_error = checker.give_error_report_video(new_file)
-		old_error = checker.give_error_report_video(old_file)
+	new_error = checker.give_error_report_video(new_file)
+	old_error = checker.give_error_report_video(old_file)
+	
     	df_old = cleanBL(df_old, "labeled_object.basic_level")
     	df_new = cleanBL(df_new, "labeled_object.basic_level")
     	df_new, fixCount, caseCount, timeCount = getBasicVideo(df_old, df_new, mark, delta, commonList)
