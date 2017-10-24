@@ -46,7 +46,7 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
 def printFix(fixCount, caseCount, timeCount):
 	asterisk = "********************************************************************"
 	nl = "\n"
-	alert = nl + asterisk + nl + asterisk + nl
+	alert = nl + nl + asterisk + nl + asterisk + nl + nl
 	fixMsg = repr(fixCount) + " ***FIX ME***, " + repr(caseCount) + " *CASE*, " + repr(timeCount) + " *TIME* "
 
 	print fixMsg + alert
@@ -58,15 +58,15 @@ def printError(old_error, new_error, logPath):
 	new_errorCount = len(new_error)
 	old_errorCount = len(old_error)
 
-	old_errorMsg = repr(old_errorCount) + " error(s) are detected in the old file:" + nl
+	old_errorMsg = nl + repr(old_errorCount) + " error(s) are detected in the old file:" + nl + nl
 	for error in old_error:
-		errorMsg = error[2] + "in row" + error[1] + 'with word "' + error[0] + '"'
+		errorMsg = error[2] + " in row " + error[1] + ' with word "' + error[0] + '"'
 		old_errorMsg = old_errorMsg + errorMsg + nl
-	new_errorMsg = repr(new_errorCount) + " error(s) are detected in the new file:" + nl
+	new_errorMsg = nl + repr(new_errorCount) + " error(s) are detected in the new file:" + nl + nl
 	for error in new_error:
-		errorMsg = error[2] + "in row" + error[1] + "with word \"" + error[0] + "\""
+		errorMsg = error[2] + " in row " + error[1] + " with word \"" + error[0] + "\""
 		new_errorMsg = new_errorMsg + errorMsg + nl
-	logMsg = "All errors recorded in" + logPath + nl
+	logMsg = nl + "All errors recorded in " + logPath + nl
 
 	writeErrorLog(old_error, new_error, logPath)
 	print alert + old_errorMsg + new_errorMsg + logMsg + alert
