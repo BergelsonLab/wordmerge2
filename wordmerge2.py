@@ -20,7 +20,6 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
 
     if "word" in list(df_old):
     	#Checking for errors for audio file
-<<<<<<< HEAD
 		new_error = checker.give_error_report_audio(new_file)
 		old_error = checker.give_error_report_audio(old_file)
 		df_old = cleanBL(df_old, "basic_level")
@@ -33,22 +32,6 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
 		df_old = cleanBL(df_old, "labeled_object.basic_level")
 		df_new = cleanBL(df_new, "labeled_object.basic_level")
 		df_new, fixCount, caseCount, timeCount = getBasicVideo(df_old, df_new, mark, delta, commonList)
-=======
-	new_error = checker.give_error_report_audio(new_file)
-	old_error = checker.give_error_report_audio(old_file)
-	
-    	df_old = cleanBL(df_old, "basic_level")
-    	df_new = cleanBL(df_new, "basic_level")
-    	df_new, fixCount, caseCount, timeCount = getBasicAudio(df_old, df_new, mark, delta, commonList)
-    else:
-    	#Checking for errors for video file
-	new_error = checker.give_error_report_video(new_file)
-	old_error = checker.give_error_report_video(old_file)
-	
-    	df_old = cleanBL(df_old, "labeled_object.basic_level")
-    	df_new = cleanBL(df_new, "labeled_object.basic_level")
-    	df_new, fixCount, caseCount, timeCount = getBasicVideo(df_old, df_new, mark, delta, commonList)
->>>>>>> 80520348775d76a7c2db432a1247261ccaf66427
 
     logPath = newpath(new_file, new_file_writeTo, "log.csv")
     printError(old_error, new_error, logPath)
@@ -61,13 +44,8 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
 def printFix(fixCount, caseCount, timeCount):
 	asterisk = "********************************************************************"
 	nl = "\n"
-<<<<<<< HEAD
-	alert = nl + asterisk + nl + asterisk + nl
-	fixMsg = repr(fixCount) + " ***FIX ME***, " + repr(caseCount) + " *CASE*, " + repr(timeCount) + " *TIME* " + nl
-=======
 	alert = nl + nl + asterisk + nl + asterisk + nl + nl
 	fixMsg = repr(fixCount) + " ***FIX ME***, " + repr(caseCount) + " *CASE*, " + repr(timeCount) + " *TIME* "
->>>>>>> 80520348775d76a7c2db432a1247261ccaf66427
 
 	print fixMsg + alert
 
@@ -80,11 +58,7 @@ def printError(old_error, new_error, logPath):
 
 	old_errorMsg = nl + repr(old_errorCount) + " error(s) are detected in the old file:" + nl + nl
 	for error in old_error:
-<<<<<<< HEAD
 		errorMsg = error[2] + " in row " + error[1] + " with word \"" + error[0] + "\""
-=======
-		errorMsg = error[2] + " in row " + error[1] + ' with word "' + error[0] + '"'
->>>>>>> 80520348775d76a7c2db432a1247261ccaf66427
 		old_errorMsg = old_errorMsg + errorMsg + nl
 	new_errorMsg = nl + repr(new_errorCount) + " error(s) are detected in the new file:" + nl + nl
 	for error in new_error:

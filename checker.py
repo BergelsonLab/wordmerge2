@@ -2,63 +2,27 @@ import sys
 import csv
 
 # Functions to check for video files
-error_log = []
-<<<<<<< HEAD
 ordinal_list = []
-=======
->>>>>>> 80520348775d76a7c2db432a1247261ccaf66427
+error_log = []
 acceptable_utterance_types = ['s', 'n', 'd', 'r', 'q', 'i']
 
-# THERE IS AN ISSUE WITH ROW NUMBERS NOT MATCHING UP PROPERLY
-# It gives the line numbers properly for the new file but not the old file
-# Also, the line numbers for the new file are repeated as the line numbers for the old file
 
-def check_ordinal_video(ordinal, line_number, word, total_lines):
-
-<<<<<<< HEAD
 def check_ordinal_video(ordinal, line_number, word, total_lines):
     digit_list = [0]
     digit_list.append(y for y in ordinal if y.isDigit())
-=======
-    #Having issues with checking for repeat values
     
->>>>>>> 80520348775d76a7c2db432a1247261ccaf66427
-    #Check for repeat values
-    '''
     try:
-<<<<<<< HEAD
         #Check for repeat values
         assert(not ordinal_list.contains(line_number))
         #Check for non-digit characters
         assert(x.isDigit() for x in ordinal)
         #Check that ordinal value is from 0 to total_lines-2, inclusive
         assert(int(''.join(digit_list)) >= 0 and int('0'.join(digit_list)) <= total_lines - 2)
-=======
-        assert(not (line_number in ordinal_list))
-    except AssertionError:
-        error_log.append([word, line_number, "labeled_object.ordinal repeat"])
-    '''
-        
-    #Check for non-digit characters
-    try:
-        assert(x.isDigit() for x in ordinal)
+
     except AssertionError:
         error_log.append([word, line_number, "labeled_object.ordinal"])
 
-    digit_list = ['0']
-    for y in ordinal:
-        if y.isdigit():
-            digit_list.append(y)
-    string_of_digits = ''.join(digit_list)
-
-    #Check that the ordinal number is in bounds
-    try:
-        assert(int(string_of_digits) >= 0 and int(string_of_digits) <= total_lines - 1)
->>>>>>> 80520348775d76a7c2db432a1247261ccaf66427
-    except AssertionError:
-        error_log.append([word, line_number, "labeled_object.ordinal"])
-
-    #ordinal_list.append(ordinal)
+    ordinal_list.append(ordinal)
     
 
 def check_onset_video(onset, line_number, word):
@@ -118,12 +82,9 @@ def check_basic_level_video(basic_level, line_number, word):
 
 
 def give_error_report_video(filepath):
-<<<<<<< HEAD
     global error_log
     error_log = []
     global ordinal_list
-=======
->>>>>>> 80520348775d76a7c2db432a1247261ccaf66427
     ordinal_list = []
     video_info = []
     with open(filepath, 'rt') as csvfileR:
@@ -154,7 +115,6 @@ def give_error_report_video(filepath):
     line_number = 1
     for row in video_info:
         if not line_number == 1:
-<<<<<<< HEAD
             check_ordinal_video(row[ordinalI], str(line_number), row[objI], total_lines)
             check_onset_video(row[onsetI], str(line_number), row[objI])
             check_offset_video(row[offsetI], str(line_number), row[objI])
@@ -163,17 +123,6 @@ def give_error_report_video(filepath):
             check_object_present_video(row[obj_preI], str(line_number), row[objI])
             check_speaker_video(row[speakerI], str(line_number), row[objI])
             check_basic_level_video(row[basicI], str(line_number), row[objI])
-=======
-            check_ordinal_video(row[0], str(line_number), row[3], total_lines)
-            check_onset_video(row[1], str(line_number), row[3])
-            check_offset_video(row[2], str(line_number), row[3])
-            check_object_video(row[3], str(line_number))
-            check_utterance_type_video(row[4], str(line_number), row[3])
-            check_object_present_video(row[5], str(line_number), row[3])
-            check_speaker_video(row[6], str(line_number), row[3])
-            if len(row) > 7:
-                check_basic_level_video(row[7], str(line_number), row[3])
->>>>>>> 80520348775d76a7c2db432a1247261ccaf66427
         line_number += 1
     return error_log
 
@@ -278,7 +227,6 @@ def give_error_report_audio(filepath):
     for row in audio_info:
         print("line number: " + str(line_number) + " word: " + row[1]) 
         if not line_number == 1:
-<<<<<<< HEAD
             check_tier_audio(row[tierI], str(line_number), row[wordI])
             check_word_audio(row[wordI], str(line_number))
             check_utterance_type_audio(row[utterI], str(line_number), row[wordI])
@@ -286,16 +234,6 @@ def give_error_report_audio(filepath):
             check_speaker_audio(row[speakerI], str(line_number), row[wordI])
             check_timestamp_audio(row[timestampI], str(line_number), row[wordI])
             check_basic_level_audio(row[basicI], str(line_number), row[wordI])
-=======
-            check_tier_audio(row[0], str(line_number), row[1])
-            check_word_audio(row[1], str(line_number))
-            check_utterance_type_audio(row[2], str(line_number), row[1])
-            check_object_present_audio(row[3], str(line_number), row[1])
-            check_speaker_audio(row[4], str(line_number), row[1])
-            check_timestamp_audio(row[5], str(line_number), row[1])
-            if len(row) > 6:
-                check_basic_level_audio(row[6], str(line_number), row[1])
->>>>>>> 80520348775d76a7c2db432a1247261ccaf66427
         line_number += 1
     return error_log
 
