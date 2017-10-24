@@ -12,7 +12,7 @@ acceptable_utterance_types = ['s', 'n', 'd', 'r', 'q', 'i']
 def check_ordinal_video(ordinal, line_number, word):
     #Check for repeat values
     try:
-        assert(not ordinal_list.contains(line_number))
+        assert(not (line_number in ordinal_list))
     except AssertionError:
         error_log.append([word, line_number, "labeled_object.ordinal"])
         
@@ -22,12 +22,15 @@ def check_ordinal_video(ordinal, line_number, word):
     except AssertionError:
         error_log.append([word, line_number, "labeled_object.ordinal"])
 
-    digit_list = [0]
-    digit_list.append(y for y in ordinal if y.isDigit())
+    digit_list = ['0']
+    for y in ordinal:
+        if y.isdigit():
+            digit_list.append(y)
+    string_of_digits = ''.join(digit_list)
     
     #Check that ordinal value is from 0 to total_lines-2, inclusive
     try:
-        assert(int(''.join(digit_list)) >= 0 and int('0'.join(digit_list)) <= total_lines - 2)
+        assert(int(string_of_digits) >= 0 and int(string_of_digits) <= total_lines - 2)
     except AssertionError:
         error_log.append([word, line_number, "labeled_object.ordinal"])
 
@@ -106,7 +109,8 @@ def give_error_report_video(filepath):
             check_utterance_type_video(row[4], str(line_number), row[3])
             check_object_present_video(row[5], str(line_number), row[3])
             check_speaker_video(row[6], str(line_number), row[3])
-            check_basic_level_video(row[7], str(line_number), row[3])
+            if len(row) > 7:
+                check_basic_level_video(row[7], str(line_number), row[3])
         line_number += 1
     return error_log
 
@@ -196,7 +200,8 @@ def give_error_report_audio(filepath):
             check_object_present_audio(row[3], str(line_number), row[1])
             check_speaker_audio(row[4], str(line_number), row[1])
             check_timestamp_audio(row[5], str(line_number), row[1])
-            check_basic_level_audio(row[6], str(line_number), row[1])
+            if len(row) > 6:
+                check_basic_level_audio(row[6], str(line_number), row[1])
         line_number += 1
     return error_log
 
