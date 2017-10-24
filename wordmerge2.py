@@ -22,20 +22,20 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
     	#Checking for errors for audio file
 		new_error = checker.give_error_report_audio(new_file)
 		old_error = checker.give_error_report_audio(old_file)
-    	df_old = cleanBL(df_old, "basic_level")
-    	df_new = cleanBL(df_new, "basic_level")
-    	df_new, fixCount, caseCount, timeCount = getBasicAudio(df_old, df_new, mark, delta, commonList)
+		df_old = cleanBL(df_old, "basic_level")
+		df_new = cleanBL(df_new, "basic_level")
+		df_new, fixCount, caseCount, timeCount = getBasicAudio(df_old, df_new, mark, delta, commonList)
     else:
     	#Checking for errors for video file
 		new_error = checker.give_error_report_video(new_file)
 		old_error = checker.give_error_report_video(old_file)
-    	df_old = cleanBL(df_old, "labeled_object.basic_level")
-    	df_new = cleanBL(df_new, "labeled_object.basic_level")
-    	df_new, fixCount, caseCount, timeCount = getBasicVideo(df_old, df_new, mark, delta, commonList)
+		df_old = cleanBL(df_old, "labeled_object.basic_level")
+		df_new = cleanBL(df_new, "labeled_object.basic_level")
+		df_new, fixCount, caseCount, timeCount = getBasicVideo(df_old, df_new, mark, delta, commonList)
 
-	logPath = newpath(new_file, new_file_writeTo, "log.csv")
-	printError(old_error, new_error, logPath)
-	printFix(fixCount, caseCount, timeCount)
+    logPath = newpath(new_file, new_file_writeTo, "log.csv")
+    printError(old_error, new_error, logPath)
+    printFix(fixCount, caseCount, timeCount)
     newFileName = newpath(new_file, new_file_writeTo, "wordmerged.csv")
     df_new.to_csv(newFileName, index = False)
 
@@ -45,7 +45,7 @@ def printFix(fixCount, caseCount, timeCount):
 	asterisk = "********************************************************************"
 	nl = "\n"
 	alert = nl + asterisk + nl + asterisk + nl
-	fixMsg = repr(fixCount) + " ***FIX ME***, " + repr(caseCount) + " *CASE*, " + repr(timeCount) + " *TIME* "
+	fixMsg = repr(fixCount) + " ***FIX ME***, " + repr(caseCount) + " *CASE*, " + repr(timeCount) + " *TIME* " + nl
 
 	print fixMsg + alert
 
@@ -56,15 +56,15 @@ def printError(old_error, new_error, logPath):
 	new_errorCount = len(new_error)
 	old_errorCount = len(old_error)
 
-	old_errorMsg = repr(old_errorCount) + " error(s) are detected in the old file:" + nl
+	old_errorMsg = nl + repr(old_errorCount) + " error(s) are detected in the old file:" + nl + nl
 	for error in old_error:
-		errorMsg = error[2] + "in row" + error[1] + "with word \"" + error[0] "\""
+		errorMsg = error[2] + " in row " + error[1] + " with word \"" + error[0] + "\""
 		old_errorMsg = old_errorMsg + errorMsg + nl
-	new_errorMsg = repr(new_errorCount) + " error(s) are detected in the new file:" + nl
+	new_errorMsg = nl + repr(new_errorCount) + " error(s) are detected in the new file:" + nl + nl
 	for error in new_error:
-		errorMsg = error[2] + "in row" + error[1] + "with word \"" + error[0] "\""
+		errorMsg = error[2] + " in row " + error[1] + " with word \"" + error[0] + "\""
 		new_errorMsg = new_errorMsg + errorMsg + nl
-	logMsg = "All errors recorded in" + logPath + nl
+	logMsg = "All errors recorded in " + logPath + nl
 
 	writeErrorLog(old_error, new_error, logPath)
 	print alert + old_errorMsg + new_errorMsg + logMsg + alert
@@ -274,4 +274,3 @@ if __name__ == "__main__":
 		mark = sys.argv[5].lower() == "true"
 
 	merge(old_file, new_file, new_file_writeTo, delta, mark)
-	printError(new_error, old_error)
