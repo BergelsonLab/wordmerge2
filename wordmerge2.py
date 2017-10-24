@@ -60,11 +60,11 @@ def printError(old_error, new_error, logPath):
 
 	old_errorMsg = repr(old_errorCount) + " error(s) are detected in the old file:" + nl
 	for error in old_error:
-		errorMsg = error[2] + "in row" + error[1] + "with word \"" + error[0] "\""
+		errorMsg = error[2] + "in row" + error[1] + 'with word "' + error[0] + '"'
 		old_errorMsg = old_errorMsg + errorMsg + nl
 	new_errorMsg = repr(new_errorCount) + " error(s) are detected in the new file:" + nl
 	for error in new_error:
-		errorMsg = error[2] + "in row" + error[1] + "with word \"" + error[0] "\""
+		errorMsg = error[2] + "in row" + error[1] + "with word \"" + error[0] + "\""
 		new_errorMsg = new_errorMsg + errorMsg + nl
 	logMsg = "All errors recorded in" + logPath + nl
 
