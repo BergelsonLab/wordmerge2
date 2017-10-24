@@ -276,4 +276,3 @@ if __name__ == "__main__":
 		mark = sys.argv[5].lower() == "true"
 
 	merge(old_file, new_file, new_file_writeTo, delta, mark)
-	printError(new_error, old_error)
