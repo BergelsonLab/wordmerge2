@@ -7,7 +7,7 @@ import checker
 #from old_file and returns dataframe of new_file
 #parameters: old file path, new file path, error range allowed for timestemp, 
 def merge(old_file, new_file, new_file_writeTo, delta, mark):
-    print "\n" + "merging {} --and-- {} .....".format(old_file, new_file)
+    print "\n" + "merging {} --and-- {} .....".format(old_file, new_file) + "\n"
     #clean csv file
     clean(new_file)
     clean(old_file)
@@ -20,51 +20,64 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
 
 
     if "word" in list(df_old):
+    	#Checking for errors for audio file
+		new_error = checker.give_error_report_audio(new_file)
+		old_error = checker.give_error_report_audio(old_file)
     	df_old = cleanBL(df_old, "basic_level")
     	df_new = cleanBL(df_new, "basic_level")
     	df_new, fixCount, caseCount, timeCount = getBasicAudio(df_old, df_new, mark, delta, commonList)
-	#Checking for errors for video file
-	new_error = checker.give_error_report_video(new_file)
-	old_error = checker.give_error_report_video(old_file)
     else:
+    	#Checking for errors for video file
+		new_error = checker.give_error_report_video(new_file)
+		old_error = checker.give_error_report_video(old_file)
     	df_old = cleanBL(df_old, "labeled_object.basic_level")
     	df_new = cleanBL(df_new, "labeled_object.basic_level")
     	df_new, fixCount, caseCount, timeCount = getBasicVideo(df_old, df_new, mark, delta, commonList)
-	#Checking for errors for audio file
-	new_error = checker.give_error_report_audio(new_file)
-	old_error = checker.give_error_report_audio(old_file)
 
-    newFileName = newpath(new_file, new_file_writeTo)
+	logPath = newpath(new_file, new_file_writeTo, "log.csv")
+	printError(old_error, new_error, logPath)
+	printFix(fixCount, caseCount, timeCount)
+    newFileName = newpath(new_file, new_file_writeTo, "wordmerged.csv")
     df_new.to_csv(newFileName, index = False)
 
     return fixCount, caseCount, timeCount
 
-def printError(new_error, old_error):
+def printFix(fixCount, caseCount, timeCount):
 	asterisk = "********************************************************************"
 	nl = "\n"
-	alert = nl + asterisk + nl + asterisk + nl + nl
+	alert = nl + asterisk + nl + asterisk + nl
+	fixMsg = repr(fixCount) + " ***FIX ME***, " + repr(caseCount) + " *CASE*, " + repr(timeCount) + " *TIME* "
+
+	print fixMsg + alert
+
+def printError(old_error, new_error, logPath):
+	asterisk = "********************************************************************"
+	nl = "\n"
+	alert = nl + asterisk + nl + asterisk + nl
 	new_errorCount = len(new_error)
 	old_errorCount = len(old_error)
 
 	old_errorMsg = repr(old_errorCount) + " error(s) are detected in the old file:" + nl
 	for error in old_error:
-		old_errorMsg = old_errorMsg + error + nl
+		errorMsg = error[2] + "in row" + error[1] + "with word \"" + error[0] "\""
+		old_errorMsg = old_errorMsg + errorMsg + nl
 	new_errorMsg = repr(new_errorCount) + " error(s) are detected in the new file:" + nl
 	for error in new_error:
-		new_errorMsg = new_errorMsg + error + nl
-	logMsg = "All errors recorded in the log file, log.txt." + nl
+		errorMsg = error[2] + "in row" + error[1] + "with word \"" + error[0] "\""
+		new_errorMsg = new_errorMsg + errorMsg + nl
+	logMsg = "All errors recorded in" + logPath + nl
 
-        with open("log.txt", 'w') as writefile:
-            writefile.write("Old file errors: " + nl)
-            for x in range(len(old_error)):
-                writefile.write(old_error[x] + nl)
-            writefile.write(nl + "New file errors: " + nl)
-            for y in range(len(new_error)):
-                writefile.write(new_error[y] + nl)
-        writefile.close()
-                
-	
+	writeErrorLog(old_error, new_error, logPath)
 	print alert + old_errorMsg + new_errorMsg + logMsg + alert
+
+def writeErrorLog(old_error, new_error, logPath):
+	with open(logPath, 'w') as writefile:
+		writer = csv.writer(writefile)
+		writer.writerow(["file", "word", "row", "column_name"]) #need to keep an eye on the row number
+		for error in old_error:
+			writer.writerow(["old_file"] + error)
+		for error in new_error:
+			writer.writerow(["new_file"] + error)
 
 #get NA list
 def commonNA(common_file):
@@ -84,12 +97,12 @@ def cleanBL(df, colname):
 	return df 
 
 #get new_file_writeTo path
-def newpath(new_file, new_file_writeTo):
+def newpath(new_file, new_file_writeTo, suffix):
 	pathList = new_file.split("/")
 	newpathList = new_file_writeTo.split("/")
 	fileName = pathList[-1]
 	dateList = fileName.split("_")
-	date = dateList[0] + "_" + dateList[1] + "_wordmerged.csv"
+	date = dateList[0] + "_" + dateList[1] + "_" + suffix
 	fullName = ""
 	for i in range(len(newpathList)):
 		if ".csv" in newpathList[i]:
