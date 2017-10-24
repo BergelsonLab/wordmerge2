@@ -18,7 +18,6 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
     common_file = "common_words_index.csv"
     commonList = commonNA(common_file)
 
-
     if "word" in list(df_old):
     	#Checking for errors for audio file
 		new_error = checker.give_error_report_audio(new_file)

@@ -116,11 +116,11 @@ def give_error_report_video(filepath):
 acceptable_tier = ['*CFP', '*CHF', '*CHN', '*CXF', '*CXN', '*FAF', '*FAN',
                    '*MAF', '*MAN', '*NON', '*OLF', '*OLN', '*SIL', '*TVF', '*TVN']
 
-def check_tier_audio(tier, line_number):
+def check_tier_audio(tier, line_number, word):
     try:
         assert(tier in acceptable_utterance_types)
     except AssertionError:
-        error_log.append("Tier invalid in line " + line_number)
+        error_log.append([word, line_number, "tier"])
 
 
 def check_word_audio(word, line_number):
@@ -128,39 +128,39 @@ def check_word_audio(word, line_number):
         try:
             assert (char.isalpha() or char == "+" or char == "'")
         except AssertionError:
-            error_log.append("Word contains invalid character in line " + line_number)
+            error_log.append([word, line_number, "word"])
 
 
-def check_utterance_type_audio(utterance_type, line_number):
+def check_utterance_type_audio(utterance_type, line_number, word):
     try:
         assert (utterance_type in acceptable_utterance_types)
     except AssertionError:
-        error_log.append("Utterance type invalid in line " + line_number)
+        error_log.append([word, line_number, "uterrance_type"])
 
 
-def check_object_present_audio(obj_pres, line_number):
+def check_object_present_audio(obj_pres, line_number, word):
     try:
         assert(obj_pres == "y" or obj_pres == "n")
     except AssertionError:
-        error_log.append("Object present invalid in line " + line_number)
+        error_log.append([word, line_number, "object_present"])
 
 
-def check_speaker_audio(speaker, line_number):
+def check_speaker_audio(speaker, line_number,word):
     if not len(speaker) == 3:
-        error_log.append("Speaker code invalid length in line " + line_number)
+        error_log.append([word, line_number, "spaeker"])
     for char in speaker:
         try:
             assert (char.isalpha() and char.isupper())
         except AssertionError:
-            error_log.append("Speaker code contains invalid character in line " + line_number)
+            error_log.append([word, line_number, "speaker"])
 
 
-def check_timestamp_audio(timestamp, line_number):
+def check_timestamp_audio(timestamp, line_number, word):
     underscore_index = timestamp.find("_")
     try:
         assert(underscore_index != -1)
     except AssertionError:
-        error_log.append("Timestamp does not contain an underscore in line " + line_number)
+        error_log.append([word, line_number, "timestamp"])
 
     if underscore_index != -1:
         for x in range(len(timestamp)):
@@ -168,37 +168,36 @@ def check_timestamp_audio(timestamp, line_number):
                try:
                    assert(timestamp[x].isdigit())
                except AssertionError:
-                   error_log.append("Timestamp has a non-numeric character other than the underscore in line " + line_number)
+                   error_log.append([word, line_number, "timestamp"])
                
     
 
-def check_basic_level_audio(basic_level, line_number):
+def check_basic_level_audio(basic_level, line_number, word):
     for char in basic_level:
         try:
             assert (char.isalpha() or char == "+" or char == "'")
         except AssertionError:
-            error_log.append("Basic level contains invalid character in line " + line_number)
+            error_log.append([word, line_number, "basic_level"])
 
 
 def give_error_report_audio(filepath):
     audio_info = []
     with open(filepath, 'rt') as csvfileR:
-        reader = csv.reader(csvfileR, delimiter=',', quotechar='|')
+        reader = csv.reader(csvfileR)
         for row in reader:
             audio_info.append(row)
-    csvfileR.close()
 
     total_lines = len(audio_info)
-    line_number = 0
+    line_number = 1
     for row in audio_info:
-        if not line_number == 0:
-            check_tier_audio(row[0], str(line_number))
+        if not line_number == 1:
+            check_tier_audio(row[0], str(line_number), row[1])
             check_word_audio(row[1], str(line_number))
-            check_utterance_type_audio(row[2], str(line_number))
-            check_object_present_audio(row[3], str(line_number))
-            check_speaker_audio(row[4], str(line_number))
-            check_timestamp_audio(row[5], str(line_number))
-            check_basic_level_audio(row[6], str(line_number))
+            check_utterance_type_audio(row[2], str(line_number), row[1])
+            check_object_present_audio(row[3], str(line_number), row[1])
+            check_speaker_audio(row[4], str(line_number), row[1])
+            check_timestamp_audio(row[5], str(line_number), row[1])
+            check_basic_level_audio(row[6], str(line_number), row[1])
         line_number += 1
     return error_log
 
