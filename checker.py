@@ -17,7 +17,7 @@ def check_ordinal_video(ordinal, line_number, word, total_lines):
         #Check for repeat values
         assert(not line_number in ordinal_list)
         #Check for non-digit characters
-        assert(x.isDigit() for x in ordinal)
+        assert(x.isdigit() for x in ordinal)
         #Check that ordinal value is from 0 to total_lines-2, inclusive
         assert(int(''.join(digit_list)) >= 0 and int('0'.join(digit_list)) <= total_lines - 2)
 
@@ -29,14 +29,14 @@ def check_ordinal_video(ordinal, line_number, word, total_lines):
 
 def check_onset_video(onset, line_number, word):
     try:
-        assert(x.isDigit() for x in onset)
+        assert(x.isdigit() for x in onset)
     except AssertionError:
         error_log.append([word, line_number, "labeled_object.onset"])
 
 
 def check_offset_video(offset, line_number, word):
     try:
-        assert(x.isDigit() for x in offset)
+        assert(x.isdigit() for x in offset)
     except AssertionError:
         error_log.append([word, line_number, "labeled_object.offset"])
 
@@ -124,7 +124,8 @@ def give_error_report_video(filepath):
             check_utterance_type_video(row[utterI], str(line_number), row[objI])
             check_object_present_video(row[obj_preI], str(line_number), row[objI])
             check_speaker_video(row[speakerI], str(line_number), row[objI])
-            check_basic_level_video(row[basicI], str(line_number), row[objI])
+            if len(row) > 7:
+                check_basic_level_video(row[basicI], str(line_number), row[objI])
         line_number += 1
     return error_log
 
@@ -235,7 +236,8 @@ def give_error_report_audio(filepath):
             check_object_present_audio(row[obj_preI], str(line_number), row[wordI])
             check_speaker_audio(row[speakerI], str(line_number), row[wordI])
             check_timestamp_audio(row[timestampI], str(line_number), row[wordI])
-            check_basic_level_audio(row[basicI], str(line_number), row[wordI])
+            if len(row) > 6:
+                check_basic_level_audio(row[basicI], str(line_number), row[wordI])
         line_number += 1
     return error_log
 
