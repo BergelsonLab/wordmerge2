@@ -2,22 +2,25 @@ import sys
 import csv
 
 # Functions to check for video files
-ordinal_list = []
 error_log = []
 acceptable_utterance_types = ['s', 'n', 'd', 'r', 'q', 'i']
 
 
-def check_ordinal_video(ordinal, line_number, word, total_lines):
-    digit_list = [0]
-    digit_list.append(y for y in ordinal if y.isDigit())
+def check_ordinal_video(ordinal, line_number, word, total_lines, ordinal_list):
+    digit_list = ['0']
+    for y in ordinal:
+        if y.isdigit():
+            digit_list.append(y)
+    string_digits = ''.join(digit_list)
+    int_digits = int(string_digits)
     
     try:
         #Check for repeat values
-        assert(not ordinal_list.contains(line_number))
+        assert(not (ordinal in ordinal_list))
         #Check for non-digit characters
-        assert(x.isDigit() for x in ordinal)
-        #Check that ordinal value is from 0 to total_lines-2, inclusive
-        assert(int(''.join(digit_list)) >= 0 and int('0'.join(digit_list)) <= total_lines - 2)
+        assert(x.isdigit() for x in ordinal)
+        #Check that ordinal value is from 1 to total_lines-1, inclusive
+        assert(int_digits >= 0 and int_digits <= total_lines - 1)
 
     except AssertionError:
         error_log.append([word, line_number, "labeled_object.ordinal"])
@@ -27,14 +30,14 @@ def check_ordinal_video(ordinal, line_number, word, total_lines):
 
 def check_onset_video(onset, line_number, word):
     try:
-        assert(x.isDigit() for x in onset)
+        assert(x.isdigit() for x in onset)
     except AssertionError:
         error_log.append([word, line_number, "labeled_object.onset"])
 
 
 def check_offset_video(offset, line_number, word):
     try:
-        assert(x.isDigit() for x in offset)
+        assert(x.isdigit() for x in offset)
     except AssertionError:
         error_log.append([word, line_number, "labeled_object.offset"])
 
@@ -115,14 +118,15 @@ def give_error_report_video(filepath):
     line_number = 1
     for row in video_info:
         if not line_number == 1:
-            check_ordinal_video(row[ordinalI], str(line_number), row[objI], total_lines)
+            check_ordinal_video(row[ordinalI], str(line_number), row[objI], total_lines, ordinal_list)
             check_onset_video(row[onsetI], str(line_number), row[objI])
             check_offset_video(row[offsetI], str(line_number), row[objI])
             check_object_video(row[objI], str(line_number))
             check_utterance_type_video(row[utterI], str(line_number), row[objI])
             check_object_present_video(row[obj_preI], str(line_number), row[objI])
             check_speaker_video(row[speakerI], str(line_number), row[objI])
-            check_basic_level_video(row[basicI], str(line_number), row[objI])
+            if len(row) > 7:
+                check_basic_level_video(row[basicI], str(line_number), row[objI])
         line_number += 1
     return error_log
 
@@ -233,7 +237,8 @@ def give_error_report_audio(filepath):
             check_object_present_audio(row[obj_preI], str(line_number), row[wordI])
             check_speaker_audio(row[speakerI], str(line_number), row[wordI])
             check_timestamp_audio(row[timestampI], str(line_number), row[wordI])
-            check_basic_level_audio(row[basicI], str(line_number), row[wordI])
+            if len(row) > 6:
+                check_basic_level_audio(row[basicI], str(line_number), row[wordI])
         line_number += 1
     return error_log
 
