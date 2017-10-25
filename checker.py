@@ -3,7 +3,7 @@ import csv
 
 # Functions to check for video files
 error_log = []
-acceptable_utterance_types = ['s', 'n', 'd', 'r', 'q', 'i']
+acceptable_utterance_types = ['s', 'n', 'd', 'r', 'q', 'i', 'o']
 
 
 def check_ordinal_video(ordinal, line_number, word, total_lines, ordinal_list):
@@ -59,7 +59,7 @@ def check_utterance_type_video(utterance_type, line_number, word):
 
 def check_object_present_video(obj_pres, line_number, word):
     try:
-        assert(obj_pres == "y" or obj_pres == "n")
+        assert(obj_pres == "y" or obj_pres == "n" or obj_pres == "o")
     except AssertionError:
         error_log.append([word, line_number, "labeled_object.object_present"])
 
@@ -132,7 +132,7 @@ def give_error_report_video(filepath):
 
 #Functions to check for audio files
 
-acceptable_tier = ['*CFP', '*CHF', '*CHN', '*CXF', '*CXN', '*FAF', '*FAN',
+acceptable_tier = ['*CFP', '*CHF', '*CHN', '*CXF', '*CXN', '*FAF', '*FAN', '*NOF',
                    '*MAF', '*MAN', '*NON', '*OLF', '*OLN', '*SIL', '*TVF', '*TVN']
 
 def check_tier_audio(tier, line_number, word):
@@ -228,8 +228,7 @@ def give_error_report_audio(filepath):
             basicI = i
 
     line_number = 1
-    for row in audio_info:
-        print("line number: " + str(line_number) + " word: " + row[1]) 
+    for row in audio_info: 
         if not line_number == 1:
             check_tier_audio(row[tierI], str(line_number), row[wordI])
             check_word_audio(row[wordI], str(line_number))
