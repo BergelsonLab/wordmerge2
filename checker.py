@@ -8,12 +8,14 @@ acceptable_utterance_types = ['s', 'n', 'd', 'r', 'q', 'i']
 
 
 def check_ordinal_video(ordinal, line_number, word, total_lines):
-    digit_list = [0]
-    digit_list.append(y for y in ordinal if y.isDigit())
+    digit_list = ['0']
+    for y in ordinal:
+        if y.isdigit():
+            digit_list.append(y) 
     
     try:
         #Check for repeat values
-        assert(not ordinal_list.contains(line_number))
+        assert(not line_number in ordinal_list)
         #Check for non-digit characters
         assert(x.isDigit() for x in ordinal)
         #Check that ordinal value is from 0 to total_lines-2, inclusive
