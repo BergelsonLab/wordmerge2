@@ -59,7 +59,7 @@ def check_utterance_type_video(utterance_type, line_number, word):
 
 def check_object_present_video(obj_pres, line_number, word):
     try:
-        assert(obj_pres == "y" or obj_pres == "n" or obj_pres == "o")
+        assert(obj_pres == "y" or obj_pres == "n" or obj_pres == "o" or obj_pres == "u")
     except AssertionError:
         error_log.append([word, line_number, "labeled_object.object_present"])
 
@@ -70,7 +70,7 @@ def check_speaker_video(speaker, line_number, word):
     else: 
         try:
             for char in speaker:
-                assert (char.isalpha() and char.isupper())
+                assert ((char.isalpha() and char.isupper()) or char.isdigit())
         except AssertionError:
             error_log.append([word, line_number, "labeled_object.speaker"])
 
@@ -132,7 +132,7 @@ def give_error_report_video(filepath):
 
 #Functions to check for audio files
 
-acceptable_tier = ['*CFP', '*CHF', '*CHN', '*CXF', '*CXN', '*FAF', '*FAN', '*NOF',
+acceptable_tier = ['*CHF', '*CHN', '*CXF', '*CXN', '*FAF', '*FAN', '*NOF',
                    '*MAF', '*MAN', '*NON', '*OLF', '*OLN', '*SIL', '*TVF', '*TVN']
 
 def check_tier_audio(tier, line_number, word):
@@ -159,7 +159,7 @@ def check_utterance_type_audio(utterance_type, line_number, word):
 
 def check_object_present_audio(obj_pres, line_number, word):
     try:
-        assert(obj_pres == "y" or obj_pres == "n")
+        assert(obj_pres == "y" or obj_pres == "n" or obj_pres == "u" or obj_pres == "o")
     except AssertionError:
         error_log.append([word, line_number, "object_present"])
 
@@ -170,7 +170,7 @@ def check_speaker_audio(speaker, line_number,word):
     else:
         try:
             for char in speaker:
-                assert (char.isalpha() and char.isupper())
+                assert ((char.isalpha() and char.isupper()) or char.isdigit())
         except AssertionError:
             error_log.append([word, line_number, "speaker"])
 

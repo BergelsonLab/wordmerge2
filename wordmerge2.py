@@ -2,6 +2,7 @@ import sys
 import csv
 import pandas as pd
 import checker
+import re
 
 #merge function rewrites the new_file with basic_level column 
 #from old_file and returns dataframe of new_file
@@ -97,14 +98,14 @@ def cleanBL(df, colname):
 
 #get new_file_writeTo path
 def newpath(new_file, new_file_writeTo, suffix):
-	pathList = new_file.split("/")
-	newpathList = new_file_writeTo.split("/")
+	pathList = re.split("\\\|/", new_file)
+	newpathList = re.split("\\\|/", new_file_writeTo)
 	fileName = pathList[-1]
 	dateList = fileName.split("_")
 	date = dateList[0] + "_" + dateList[1] + "_" + suffix
 	fullName = ""
 	for i in range(len(newpathList)):
-		if ".csv" in newpathList[i]:
+		if ".csv" in newpathList[i] or not newpathList[i]:
 			continue
 		fullName += newpathList[i]
 		fullName += "/"
