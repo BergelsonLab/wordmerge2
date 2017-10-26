@@ -3,7 +3,8 @@ import csv
 
 # Functions to check for video files
 error_log = []
-acceptable_utterance_types = ['s', 'n', 'd', 'r', 'q', 'i', 'o']
+acceptable_utterance_types = ['s', 'n', 'd', 'r', 'q', 'i', 'o', 'u']
+comment = "%com:"
 
 
 def check_ordinal_video(ordinal, line_number, word, total_lines, ordinal_list):
@@ -44,44 +45,54 @@ def check_offset_video(offset, line_number, word):
 
 def check_object_video(obj, line_number):
     try:
-        for char in obj:
-            assert (char.isalpha() or char == "+" or char == "'")
+    	if not obj.startswith(comment):
+	        for char in obj:
+	            assert (char.isalpha() or char == "+" or char == "'")
     except AssertionError:
         error_log.append([obj, line_number, "labeled_object.object"])
 
 
 def check_utterance_type_video(utterance_type, line_number, word):
     try:
-        assert (utterance_type in acceptable_utterance_types)
+    	if word.startswith(comment):
+    		assert (utterance_type == "NA")
+    	else:
+        	assert (utterance_type in acceptable_utterance_types)
     except AssertionError:
         error_log.append([word, line_number, "labeled_object.utterance_type"])
 
 
 def check_object_present_video(obj_pres, line_number, word):
     try:
-        assert(obj_pres == "y" or obj_pres == "n" or obj_pres == "o")
+    	if word.startswith(comment):
+    		assert (obj_pres == "NA")
+    	else:
+        	assert(obj_pres == "y" or obj_pres == "n" or obj_pres == "o" or obj_pres == "u")
     except AssertionError:
         error_log.append([word, line_number, "labeled_object.object_present"])
 
 
 def check_speaker_video(speaker, line_number, word):
-    if not len(speaker) == 3:
-        error_log.append([word, line_number, "labeled_object.speaker"])
-    else: 
-        try:
-            for char in speaker:
-                assert (char.isalpha() and char.isupper())
-        except AssertionError:
-            error_log.append([word, line_number, "labeled_object.speaker"])
+	try:
+		if word.startswith(comment):
+			assert (speaker == "NA")
+		else:
+			assert(len(speaker) == 3)
+			for char in speaker:
+				assert ((char.isalpha() and char.isupper()) or char.isdigit())
+	except AssertionError:
+		error_log.append([word, line_number, "labeled_object.speaker"])
 
 
 def check_basic_level_video(basic_level, line_number, word):
-    if basic_level:
-        try:
-            for char in basic_level:
-                assert (char.isalpha() or char == "+" or char == "'" or char == " ")
-        except AssertionError:
-            error_log.append([word, line_number, "labeled_object.basic_level"])
+    try:
+    	if word.startswith(comment):
+    		assert (basic_level == "NA")
+    	else:
+	        for char in basic_level:
+	            assert (char.isalpha() or char == "+" or char == "'" or char == " ")
+    except AssertionError:
+        error_log.append([word, line_number, "labeled_object.basic_level"])
 
 
 def give_error_report_video(filepath):
@@ -111,7 +122,7 @@ def give_error_report_video(filepath):
             obj_preI = i
         elif colName[i] == "labeled_object.speaker":
             speakerI = i
-        elif colName[i] == "labeled_object.basic_level":
+        elif colName[i] == "labeled_object.basic_level" or colName[i] == "basic_level":
             basicI = i
 
     total_lines = len(video_info)
@@ -132,7 +143,7 @@ def give_error_report_video(filepath):
 
 #Functions to check for audio files
 
-acceptable_tier = ['*CFP', '*CHF', '*CHN', '*CXF', '*CXN', '*FAF', '*FAN', '*NOF',
+acceptable_tier = ['*CHF', '*CHN', '*CXF', '*CXN', '*FAF', '*FAN', '*NOF',
                    '*MAF', '*MAN', '*NON', '*OLF', '*OLN', '*SIL', '*TVF', '*TVN']
 
 def check_tier_audio(tier, line_number, word):
@@ -159,7 +170,7 @@ def check_utterance_type_audio(utterance_type, line_number, word):
 
 def check_object_present_audio(obj_pres, line_number, word):
     try:
-        assert(obj_pres == "y" or obj_pres == "n")
+        assert(obj_pres == "y" or obj_pres == "n" or obj_pres == "u" or obj_pres == "o")
     except AssertionError:
         error_log.append([word, line_number, "object_present"])
 
@@ -170,7 +181,7 @@ def check_speaker_audio(speaker, line_number,word):
     else:
         try:
             for char in speaker:
-                assert (char.isalpha() and char.isupper())
+                assert ((char.isalpha() and char.isupper()) or char.isdigit())
         except AssertionError:
             error_log.append([word, line_number, "speaker"])
 

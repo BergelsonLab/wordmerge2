@@ -46,8 +46,10 @@ def writeLog(new_folder, fixCount, caseCount, timeCount):
 	now = datetime.datetime.now()
 	currentD = datetime.date(now.year, now.month, now.day)
 	fileName = currentD.isoformat() + "_count_log.csv"
-	fullName = ""
+	fullName = "/"
 	for i in range(len(pathList)):
+		if not pathList[i]:
+			continue
 		fullName += pathList[i]
 		fullName += "/"
 	fullName += fileName
