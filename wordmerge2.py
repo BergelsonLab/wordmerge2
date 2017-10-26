@@ -103,7 +103,7 @@ def newpath(new_file, new_file_writeTo, suffix):
 	fileName = pathList[-1]
 	dateList = fileName.split("_")
 	date = dateList[0] + "_" + dateList[1] + "_" + suffix
-	fullName = ""
+	fullName = "/"
 	for i in range(len(newpathList)):
 		if ".csv" in newpathList[i] or not newpathList[i]:
 			continue
