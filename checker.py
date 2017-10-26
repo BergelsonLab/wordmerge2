@@ -4,13 +4,6 @@ import csv
 # Functions to check for video files
 error_log = []
 acceptable_utterance_types = ['s', 'n', 'd', 'r', 'q', 'i', 'o', 'u']
-acceptable_speaker_codes = ['MOT', 'FAT', 'CHI', 'BRO', 'SIS', 'GRM', 'GRP', 'GRA',
-                            'GP2', 'AUN', 'AU2', 'UNC', 'UN2', 'FCO', 'FC2', 'MC2',
-                            'TOY', 'TVN', 'MFT', 'MMT', 'MFV', 'MIS', 'MBR', 'MTY',
-                            'MTV', 'MGM', 'MGP', 'MCU', 'MAF', 'FTY', 'FTV', 'FBR',
-                            'FGM', 'FGP', 'FGA', 'FG2', 'FCU', 'FTS', 'SST', 'SCU',
-                            'STY', 'BCU', 'BTY', 'MGG', 'FGG', 'GTY', 'GRY', 'GRO',
-                            'CTY', 'ATY', 'UMT', 'ATV', 'CCU']
 comment = "%com:"
 
 
@@ -78,47 +71,22 @@ def check_object_present_video(obj_pres, line_number, word):
     except AssertionError:
         error_log.append([word, line_number, "labeled_object.object_present"])
 
-
 def isValid(speaker):
     if len(speaker) != 3: return False
-    if speaker[0] == 'B' and speaker[1] == 'R' and speaker[2].isdigit():
-        return True
-    elif speaker[0] == 'S' and speaker[1] == 'I' and speaker[2].isdigit():
-        return True
-    elif speaker[0] == 'A' and speaker[1] == 'F' and speaker[2].isdigit():
-        return True
-    elif speaker[0] == 'A' and speaker[1] == 'M' and speaker[2].isdigit():
-        return True
-    elif speaker[0] == 'C' and speaker[1] == 'F' and speaker[2].isdigit():
-        return True
-    elif speaker[0] == 'C' and speaker[1] == 'M' and speaker[2].isdigit():
-        return True
-    elif speaker[0] == 'C' and speaker[1] == 'H' and speaker[2].isdigit():
-        return True
-    elif speaker[0] == 'E' and speaker[1] == 'F' and speaker[2].isalpha() and speaker[2].isupper():
-        return True
-    elif speaker[0] == 'E' and speaker[1] == 'M' and speaker[2].isalpha() and speaker[2].isupper():
-        return True
-    elif speaker[0] == 'B' and speaker[1] == 'S' and speaker[2].isalpha() and speaker[2].isupper():
-        return True
-    elif speaker[0] == 'A' and speaker[1] == 'F' and speaker[2].isalpha() and speaker[2].isupper():
-        return True
-    elif speaker[0] == 'A' and speaker[1] == 'M' and speaker[2].isalpha() and speaker[2].isupper():
-        return True
-    elif speaker[0] == 'C' and speaker[1] == 'F' and speaker[2].isalpha() and speaker[2].isupper():
-        return True
-    elif speaker[0] == 'C' and speaker[1] == 'M' and speaker[2].isalpha() and speaker[2].isupper():
-        return True
+    if speaker[0].isalpha() and speaker[0].isupper():
+        if speaker[1].isalpha() and speaker[1].isupper():
+            if speaker[2].isalpha() and speaker[2].isupper():
+                return True
+            elif speaker[2].isdigit():
+                return True
     return False
-
 
 def check_speaker_video(speaker, line_number, word):
 	try:
             if word.startswith(comment):
 		assert (speaker == "NA")
 	    else:
-		assert(len(speaker) == 3)
-		assert((speaker in acceptable_speaker_codes) or isValid(speaker))
+		assert(isValid(speaker))
 	except AssertionError:
 		error_log.append([word, line_number, "labeled_object.speaker"])
 
@@ -215,14 +183,13 @@ def check_object_present_audio(obj_pres, line_number, word):
 
 
 def check_speaker_audio(speaker, line_number,word):
-    if not len(speaker) == 3:
-        error_log.append([word, line_number, "speaker"])
-    else:
-        try:
-            for char in speaker:
-                assert ((char.isalpha() and char.isupper()) or char.isdigit())
-        except AssertionError:
-            error_log.append([word, line_number, "speaker"])
+    try:
+        if word.startswith(comment):
+	    assert (speaker == "NA")
+	else:
+	    assert(isValid(speaker))
+    except AssertionError:
+	error_log.append([word, line_number, "labeled_object.speaker"])
 
 
 def check_timestamp_audio(timestamp, line_number, word):
