@@ -3,6 +3,7 @@ import csv
 import pandas as pd
 import checker
 import re
+import os
 
 #merge function rewrites the new_file with basic_level column 
 #from old_file and returns dataframe of new_file
@@ -26,6 +27,7 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
 		df_old = cleanBL(df_old, "basic_level")
 		df_new = cleanBL(df_new, "basic_level")
 		df_new, fixCount, caseCount, timeCount = getBasicAudio(df_old, df_new, mark, delta, commonList)
+		isAudio = True
     else:
     	#Checking for errors for video file
 		new_error = checker.give_error_report_video(new_file)
@@ -33,14 +35,15 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
 		df_old = cleanBL(df_old, "labeled_object.basic_level")
 		df_new = cleanBL(df_new, "labeled_object.basic_level")
 		df_new, fixCount, caseCount, timeCount = getBasicVideo(df_old, df_new, mark, delta, commonList)
+		isAudio = False
 
-    logPath = newpath(new_file, new_file_writeTo, "log.csv")
+    logPath = newErrorPath(new_file, new_file_writeTo, "log.csv")
     printError(old_error, new_error, logPath)
     printFix(fixCount, caseCount, timeCount)
     newFileName = newpath(new_file, new_file_writeTo, "wordmerged.csv")
     df_new.to_csv(newFileName, index = False)
 
-    return fixCount, caseCount, timeCount
+    return fixCount, caseCount, timeCount, isAudio
 
 def printFix(fixCount, caseCount, timeCount):
 	asterisk = "********************************************************************"
@@ -96,20 +99,39 @@ def cleanBL(df, colname):
 	df[colname] = df[colname].astype(str)
 	return df 
 
+def newErrorPath(new_file, new_file_writeTo, suffix):
+	newpathList = re.split("\\\|/", new_file_writeTo)
+	newpathList.append("error")
+	pathName = combinePath(newpathList)
+	if not os.path.exists(pathName):
+		os.makedirs(pathName)
+	preffix = getPreffix(new_file, suffix)
+	pathName += preffix
+	return pathName
+
 #get new_file_writeTo path
 def newpath(new_file, new_file_writeTo, suffix):
-	pathList = re.split("\\\|/", new_file)
+	preffix = getPreffix(new_file, suffix)
 	newpathList = re.split("\\\|/", new_file_writeTo)
+	fullName = combinePath(newpathList)
+	fullName += preffix
+	return fullName
+
+def getPreffix(new_file, suffix):
+	pathList = re.split("\\\|/", new_file)
 	fileName = pathList[-1]
-	dateList = fileName.split("_")
-	date = dateList[0] + "_" + dateList[1] + "_" + suffix
+	prefList = fileName.split("_")
+	pref = prefList[0] + "_" + prefList[1] + "_" + suffix
+	return pref
+
+
+def combinePath(pathList):
 	fullName = "/"
-	for i in range(len(newpathList)):
-		if ".csv" in newpathList[i] or not newpathList[i]:
+	for i in range(len(pathList)):
+		if ".csv" in pathList[i] or not pathList[i]:
 			continue
-		fullName += newpathList[i]
+		fullName += pathList[i]
 		fullName += "/"
-	fullName += date
 	return fullName
 
 
