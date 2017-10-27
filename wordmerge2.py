@@ -27,6 +27,7 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
 		df_old = cleanBL(df_old, "basic_level")
 		df_new = cleanBL(df_new, "basic_level")
 		df_new, fixCount, caseCount, timeCount = getBasicAudio(df_old, df_new, mark, delta, commonList)
+		isAudio = True
     else:
     	#Checking for errors for video file
 		new_error = checker.give_error_report_video(new_file)
@@ -34,6 +35,7 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
 		df_old = cleanBL(df_old, "labeled_object.basic_level")
 		df_new = cleanBL(df_new, "labeled_object.basic_level")
 		df_new, fixCount, caseCount, timeCount = getBasicVideo(df_old, df_new, mark, delta, commonList)
+		isAudio = False
 
     logPath = newErrorPath(new_file, new_file_writeTo, "log.csv")
     printError(old_error, new_error, logPath)
@@ -41,7 +43,7 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
     newFileName = newpath(new_file, new_file_writeTo, "wordmerged.csv")
     df_new.to_csv(newFileName, index = False)
 
-    return fixCount, caseCount, timeCount
+    return fixCount, caseCount, timeCount, isAudio
 
 def printFix(fixCount, caseCount, timeCount):
 	asterisk = "********************************************************************"

@@ -24,7 +24,7 @@ def runWordmerge2(old_folder, new_folder):
 			oldDate = getdates(oldFile)
 			newDate = getdates(newFile)
 			if oldDate == newDate:
-				fix, case, time = wm2.merge(oldFile, newFile, new_folder, delta, mark)
+				fix, case, time, isAudio = wm2.merge(oldFile, newFile, new_folder, delta, mark)
 				fixCount += fix
 				caseCount += case
 				timeCount += time
