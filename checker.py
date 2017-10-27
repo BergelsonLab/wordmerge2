@@ -71,15 +71,22 @@ def check_object_present_video(obj_pres, line_number, word):
     except AssertionError:
         error_log.append([word, line_number, "labeled_object.object_present"])
 
+def isValid(speaker):
+    if len(speaker) != 3: return False
+    if speaker[0].isalpha() and speaker[0].isupper():
+        if speaker[1].isalpha() and speaker[1].isupper():
+            if speaker[2].isalpha() and speaker[2].isupper():
+                return True
+            elif speaker[2].isdigit():
+                return True
+    return False
 
 def check_speaker_video(speaker, line_number, word):
 	try:
-		if word.startswith(comment):
-			assert (speaker == "NA")
-		else:
-			assert(len(speaker) == 3)
-			for char in speaker:
-				assert ((char.isalpha() and char.isupper()) or char.isdigit())
+            if word.startswith(comment):
+		assert (speaker == "NA")
+	    else:
+		assert(isValid(speaker))
 	except AssertionError:
 		error_log.append([word, line_number, "labeled_object.speaker"])
 
@@ -87,10 +94,10 @@ def check_speaker_video(speaker, line_number, word):
 def check_basic_level_video(basic_level, line_number, word):
     try:
     	if word.startswith(comment):
-    		assert (basic_level == "NA")
+    	    assert (basic_level == "NA")
     	else:
-	        for char in basic_level:
-	            assert (char.isalpha() or char == "+" or char == "'" or char == " ")
+	    for char in basic_level:
+	        assert (char.isalpha() or char == "+" or char == "'" or char == " ")
     except AssertionError:
         error_log.append([word, line_number, "labeled_object.basic_level"])
 
@@ -176,14 +183,13 @@ def check_object_present_audio(obj_pres, line_number, word):
 
 
 def check_speaker_audio(speaker, line_number,word):
-    if not len(speaker) == 3:
-        error_log.append([word, line_number, "speaker"])
-    else:
-        try:
-            for char in speaker:
-                assert ((char.isalpha() and char.isupper()) or char.isdigit())
-        except AssertionError:
-            error_log.append([word, line_number, "speaker"])
+    try:
+        if word.startswith(comment):
+	    assert (speaker == "NA")
+	else:
+	    assert(isValid(speaker))
+    except AssertionError:
+	error_log.append([word, line_number, "labeled_object.speaker"])
 
 
 def check_timestamp_audio(timestamp, line_number, word):
