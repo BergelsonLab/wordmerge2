@@ -19,9 +19,11 @@ The file pairs would not be changed (although the extra space might be cleaned),
 
 If the script does not recieve the last three input, *delta*, *mark* and *printLog* would be set to default 
 
-- *old_file* is the path of the old file
-- *new_file* is the path of the new file
-- *new_file_writeTo* is the path of folder in which the wordmerge-processed file will be generated
+An error log file would also be generated in the `error` subdirectory under the *new_file_writeTo* folder. It records detailed error log information. If no `error` subdirectory found, the script would create one.  
+
+- *old_file* is the ABSOLUTE path of the old file
+- *new_file* is the ABSOLUTE path of the new file
+- *new_file_writeTo* is the ABSOLUTE path of folder in which the wordmerge-processed file will be generated
 - *delta* is the time range allowed for matching: 
   * When oldfile.timeOnset-*delta* < newfile.timeOnset < oldfile.timeOnset+*delta*, the pair would be considered with the same time stamp
   * Same is true for timeOffset
@@ -46,5 +48,5 @@ Two log files will also be generated in the new folder. `date_count_log.csv` rec
 
 *delta* and *mark* inputs are set to default value inside this script, *printLog* is set to False so no individual log information would be printed to terminal or commandline, but the total count log would be displayed. 
 
-- *old_folder* is the path of the old folder which contains both old files and new files and should be absolute path. 
-- *new_folder* is the path of the new folder where merged csv files are generated and should be absolute path. 
+- *old_folder* is the ABSOLUTE path of the old folder which contains both old files and new files and should be absolute path. 
+- *new_folder* is the ABSOLUTE path of the new folder where merged csv files are generated and should be absolute path. 
