@@ -44,7 +44,7 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
     newFileName = newpath(new_file, new_file_writeTo, "wordmerged.csv", isAudio)
     df_new.to_csv(newFileName, index = False)
 
-    return fixCount, caseCount, timeCount, isAudio, newFileName
+    return fixCount, caseCount, timeCount, isAudio, newFileName, old_error, new_error
 
 def printFix(fixCount, caseCount, timeCount):
 	asterisk = "********************************************************************"
@@ -155,7 +155,10 @@ def clean(file):
 				del row[-1]
 		if "basic_level" not in rowlist[0]:
 			if "labeled_object.basic_level" not in rowlist[0]:
-				rowlist[0].append('basic_level')
+				if "word" in rowlist[0]:
+					rowlist[0].append('basic_level')
+				else:
+					rowlist[0].append("labeled_object.basic_level")
 	with open(file, 'wb') as writefile:
 		writer = csv.writer(writefile)
 		for n in rowlist:
