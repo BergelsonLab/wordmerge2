@@ -8,6 +8,7 @@ import datetime
 def runWordmerge2(old_folder, new_folder):
 	newFileList = []
 	oldFileList = []
+	fileCount = []
 	delta = 0
 	mark = True
 	fixCount = 0
@@ -24,11 +25,13 @@ def runWordmerge2(old_folder, new_folder):
 			oldDate = getdates(oldFile)
 			newDate = getdates(newFile)
 			if oldDate == newDate:
-				fix, case, time, isAudio = wm2.merge(oldFile, newFile, new_folder, delta, mark)
+				fix, case, time, isAudio, newFileName = wm2.merge(oldFile, newFile, new_folder, delta, mark)
+				fileCount.append([newFileName, fix, case, time])
 				fixCount += fix
 				caseCount += case
 				timeCount += time
-	writeLog(new_folder, fixCount, caseCount, timeCount)
+	writeLog(new_folder, fixCount, caseCount, timeCount, fileCount)
+	printFix(fixCount, caseCount, timeCount)
 
 
 #get prefix from full path file
@@ -39,9 +42,22 @@ def getdates(file):
 	date = dateList[0] + "_" + dateList[1]
 	return date
 
+def printFix(fixCount, caseCount, timeCount):
+	asterisk = "********************************************************************"
+	nl = "\n"
+	alert = nl + nl + asterisk + nl + asterisk + nl + nl
+	fixMsg = repr(fixCount) + " ***FIX ME***, " + repr(caseCount) + " *CASE*, " + repr(timeCount) + " *TIME* "
+
+	print alert + fixMsg + alert
+
+# def getFileName(path):
+# 	pathList = re.split("\\\|/", path)
+# 	fileName = pathList[-1]
+# 	return fileName
+
 #print out log file
-def writeLog(new_folder, fixCount, caseCount, timeCount):
-	countRow = [fixCount, caseCount, timeCount]
+def writeLog(new_folder, fixCount, caseCount, timeCount, fileCount):
+	countRow = ["Total", fixCount, caseCount, timeCount]
 	pathList = re.split("\\\|/", new_folder) #new_folder.split("/")
 	now = datetime.datetime.now()
 	currentD = datetime.date(now.year, now.month, now.day)
@@ -55,6 +71,9 @@ def writeLog(new_folder, fixCount, caseCount, timeCount):
 	fullName += fileName
 	with open(fullName, "wb") as writefile:
 		writer = csv.writer(writefile)
+		writer.writerow(["file", "FIX", "CASE", "TIME"])
+		for count in fileCount:
+			writer.writerow(count)
 		writer.writerow(countRow)
 
 if __name__ == "__main__":
