@@ -37,13 +37,14 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
 		df_new, fixCount, caseCount, timeCount = getBasicVideo(df_old, df_new, mark, delta, commonList)
 		isAudio = False
 
-    logPath = newErrorPath(new_file, new_file_writeTo, "log.csv")
+    logPath = newErrorPath(new_file, new_file_writeTo, "log.csv", isAudio)
     printError(old_error, new_error, logPath)
     printFix(fixCount, caseCount, timeCount)
-    newFileName = newpath(new_file, new_file_writeTo, "wordmerged.csv")
+    writeErrorLog(old_error, new_error, logPath, getFileName(old_file), getFileName(new_file))
+    newFileName = newpath(new_file, new_file_writeTo, "wordmerged.csv", isAudio)
     df_new.to_csv(newFileName, index = False)
 
-    return fixCount, caseCount, timeCount, isAudio
+    return fixCount, caseCount, timeCount, isAudio, newFileName, old_error, new_error
 
 def printFix(fixCount, caseCount, timeCount):
 	asterisk = "********************************************************************"
@@ -70,17 +71,16 @@ def printError(old_error, new_error, logPath):
 		new_errorMsg = new_errorMsg + errorMsg + nl
 	logMsg = nl + "All errors recorded in " + logPath + nl
 
-	writeErrorLog(old_error, new_error, logPath)
 	print alert + old_errorMsg + new_errorMsg + logMsg + alert
 
-def writeErrorLog(old_error, new_error, logPath):
+def writeErrorLog(old_error, new_error, logPath, old_fileName, new_fileName):
 	with open(logPath, 'w') as writefile:
 		writer = csv.writer(writefile)
 		writer.writerow(["file", "word", "row", "column_name"]) #need to keep an eye on the row number
 		for error in old_error:
-			writer.writerow(["old_file"] + error)
+			writer.writerow([old_fileName] + error)
 		for error in new_error:
-			writer.writerow(["new_file"] + error)
+			writer.writerow([new_fileName] + error)
 
 #get NA list
 def commonNA(common_file):
@@ -99,29 +99,38 @@ def cleanBL(df, colname):
 	df[colname] = df[colname].astype(str)
 	return df 
 
-def newErrorPath(new_file, new_file_writeTo, suffix):
+def newErrorPath(new_file, new_file_writeTo, suffix, isAudio):
 	newpathList = re.split("\\\|/", new_file_writeTo)
 	newpathList.append("error")
 	pathName = combinePath(newpathList)
 	if not os.path.exists(pathName):
 		os.makedirs(pathName)
-	preffix = getPreffix(new_file, suffix)
+	preffix = getPreffix(new_file, suffix, isAudio)
 	pathName += preffix
 	return pathName
 
+def getFileName(path):
+	pathList = re.split("\\\|/", path)
+	fileName = pathList[-1]
+	return fileName
+
 #get new_file_writeTo path
-def newpath(new_file, new_file_writeTo, suffix):
-	preffix = getPreffix(new_file, suffix)
+def newpath(new_file, new_file_writeTo, suffix, isAudio):
+	preffix = getPreffix(new_file, suffix, isAudio)
 	newpathList = re.split("\\\|/", new_file_writeTo)
 	fullName = combinePath(newpathList)
 	fullName += preffix
 	return fullName
 
-def getPreffix(new_file, suffix):
-	pathList = re.split("\\\|/", new_file)
-	fileName = pathList[-1]
+def getPreffix(new_file, suffix, isAudio):
+	fileName = getFileName(new_file)
 	prefList = fileName.split("_")
-	pref = prefList[0] + "_" + prefList[1] + "_" + suffix
+	pref = prefList[0] + "_" + prefList[1] + "_"
+	if isAudio:
+		pref += "audio" + "_"
+	else:
+		pref += "video" + "_"
+	pref += suffix
 	return pref
 
 
@@ -146,7 +155,10 @@ def clean(file):
 				del row[-1]
 		if "basic_level" not in rowlist[0]:
 			if "labeled_object.basic_level" not in rowlist[0]:
-				rowlist[0].append('basic_level')
+				if "word" in rowlist[0]:
+					rowlist[0].append('basic_level')
+				else:
+					rowlist[0].append("labeled_object.basic_level")
 	with open(file, 'wb') as writefile:
 		writer = csv.writer(writefile)
 		for n in rowlist:
