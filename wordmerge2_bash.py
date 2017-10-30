@@ -12,6 +12,7 @@ def runWordmerge2(old_folder, new_folder):
 	fileError = []
 	delta = 0
 	mark = True
+	printLog = False
 	fixCount = 0
 	caseCount = 0
 	timeCount = 0
@@ -26,7 +27,7 @@ def runWordmerge2(old_folder, new_folder):
 			oldDate = getdates(oldFile)
 			newDate = getdates(newFile)
 			if oldDate == newDate:
-				fix, case, time, isAudio, newFileName, old_error, new_error = wm2.merge(oldFile, newFile, new_folder, delta, mark)
+				fix, case, time, isAudio, newFileName, old_error, new_error = wm2.merge(oldFile, newFile, new_folder, delta, mark, printLog)
 				fileCount.append([getFileName(newFileName), fix, case, time])
 				fixCount += fix
 				caseCount += case

@@ -8,7 +8,7 @@ import os
 #merge function rewrites the new_file with basic_level column 
 #from old_file and returns dataframe of new_file
 #parameters: old file path, new file path, error range allowed for timestemp, 
-def merge(old_file, new_file, new_file_writeTo, delta, mark):
+def merge(old_file, new_file, new_file_writeTo, delta, mark, printLog):
     print "\n" + "merging {} --and-- {} .....".format(old_file, new_file) + "\n"
     #clean csv file
     clean(new_file)
@@ -38,8 +38,9 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark):
 		isAudio = False
 
     logPath = newErrorPath(new_file, new_file_writeTo, "log.csv", isAudio)
-    printError(old_error, new_error, logPath)
-    printFix(fixCount, caseCount, timeCount)
+    if printLog:
+    	printError(old_error, new_error, logPath)
+    	printFix(fixCount, caseCount, timeCount)
     writeErrorLog(old_error, new_error, logPath, getFileName(old_file), getFileName(new_file))
     newFileName = newpath(new_file, new_file_writeTo, "wordmerged.csv", isAudio)
     df_new.to_csv(newFileName, index = False)
@@ -296,6 +297,7 @@ def getTimeChangeAudio(df_old_lower, df_new, newr, mark, delta):
 if __name__ == "__main__":
 	delta = 0
 	mark = True
+	printLog = True
 
 	new_error = []
         old_error = []
@@ -307,5 +309,7 @@ if __name__ == "__main__":
 		delta = int(sys.argv[4])
 	if len(sys.argv) >= 6:
 		mark = sys.argv[5].lower() == "true"
+	if len(sys.argv) >= 7:
+		printLog = sys.argv[5].lower() == "true"
 
-	merge(old_file, new_file, new_file_writeTo, delta, mark)
+	merge(old_file, new_file, new_file_writeTo, delta, mark, printLog)
