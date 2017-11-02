@@ -87,7 +87,7 @@ def writeErrorLog(old_error, new_error, logPath, old_fileName, new_fileName):
 def commonNA(common_file):
 	df_common = pd.read_csv(common_file, header = 0, usecols = [0, 1, 2, 3], keep_default_na = False)
 	commonWord = df_common.loc[df_common["Basic Level"] == "NA", "word"]
-	commonWord = [word.lower() for word in commonWord]
+	commonWord = [word.lower().replace(" ", "") for word in commonWord]
 	return commonWord
 
 #clean basic_level column
@@ -170,7 +170,7 @@ def lowerDFVideo(df_old):
 	df_old_lower = df_old.copy();
 	for oldr in range(0, len(df_old_lower.index)):
 		objectN = df_old_lower.get_value(oldr, "labeled_object.object")
-		df_old_lower.set_value(oldr, "labeled_object.object", objectN.lower())
+		df_old_lower.set_value(oldr, "labeled_object.object", objectN.lower().replace(" ", ""))
 	return df_old_lower
 
 #create lowercase version of old_file for audio
@@ -178,7 +178,7 @@ def lowerDFAudio(df_old):
 	df_old_lower = df_old.copy();
 	for oldr in range(0, len(df_old_lower.index)):
 		objectN = df_old_lower.get_value(oldr, "word")
-		df_old_lower.set_value(oldr, "word", objectN.lower())
+		df_old_lower.set_value(oldr, "word", objectN.lower().replace(" ", ""))
 	return df_old_lower
 
 #return the basic level entry with option to mark or not
@@ -207,7 +207,7 @@ def getBasicVideo(df_old, df_new, mark, delta, commonList):
 		if "*TIME*" in blValue:
 			timeCount += 1
 		if blValue == "***FIX ME***":
-			if df_new.get_value(newr, "labeled_object.object").lower() in commonList:
+			if df_new.get_value(newr, "labeled_object.object").lower().replace(" ", "") in commonList:
 				blValue = "NA"
 			else:
 				fixCount += 1
@@ -216,7 +216,7 @@ def getBasicVideo(df_old, df_new, mark, delta, commonList):
 
 #check if the timestamp is within the range
 def getTimeChangeVideo(df_old_lower, newr, df_new, mark, delta):
-	temp_df = df_old_lower.loc[df_old_lower["labeled_object.object"] == df_new.get_value(newr, "labeled_object.object").lower(), ["labeled_object.offset", "labeled_object.onset", "labeled_object.basic_level"]]
+	temp_df = df_old_lower.loc[df_old_lower["labeled_object.object"] == df_new.get_value(newr, "labeled_object.object").lower().replace(" ", ""), ["labeled_object.offset", "labeled_object.onset", "labeled_object.basic_level"]]
 	if not temp_df.empty:
 		blValue = "***FIX ME***"
 		for oldr in temp_df.index:
@@ -243,7 +243,7 @@ def getBasicAudio(df_old, df_new, mark, delta, commonList):
 		df_old_lower = lowerDFAudio(df_old)
 		try:
 			temp_df = df_old_lower.loc[df_old_lower["tier"] == df_new.get_value(newr, "tier"), ["word", "timestamp", "basic_level"]]
- 			temp_df = temp_df.loc[temp_df["word"] == df_new.get_value(newr, "word").lower(), ["basic_level", "timestamp", "word"]]
+ 			temp_df = temp_df.loc[temp_df["word"] == df_new.get_value(newr, "word").lower().replace(" ", ""), ["basic_level", "timestamp", "word"]]
  			for oldr in temp_df.index:
  				addMark = ""
  				if df_old.get_value(oldr, "word") != df_new.get_value(newr, "word"):
@@ -260,7 +260,7 @@ def getBasicAudio(df_old, df_new, mark, delta, commonList):
 		if "*TIME*" in blValue:
 			timeCount += 1
 		if blValue == "***FIX ME***":
-			if df_new.get_value(newr, "word").lower() in commonList:
+			if df_new.get_value(newr, "word").lower().replace(" ", "") in commonList:
 				blValue = "NA"
 			else:
 				fixCount += 1
@@ -271,7 +271,7 @@ def getBasicAudio(df_old, df_new, mark, delta, commonList):
 #check if the timestamp is within the range
 def getTimeChangeAudio(df_old_lower, df_new, newr, mark, delta):
 	temp_df = df_old_lower.loc[df_old_lower["tier"] == df_new.get_value(newr, "tier"), ["word", "timestamp", "basic_level"]]
-	temp_df = temp_df.loc[temp_df["word"] == df_new.get_value(newr, "word").lower(), ["basic_level", "timestamp"]]
+	temp_df = temp_df.loc[temp_df["word"] == df_new.get_value(newr, "word").lower().replace(" ", ""), ["basic_level", "timestamp"]]
 	if not temp_df.empty:
 		blValue = "***FIX ME***"
 		for oldr in temp_df.index:
@@ -308,8 +308,8 @@ if __name__ == "__main__":
 	if len(sys.argv) >= 5:
 		delta = int(sys.argv[4])
 	if len(sys.argv) >= 6:
-		mark = sys.argv[5].lower() == "true"
+		mark = sys.argv[5].lower().replace(" ", "") == "true"
 	if len(sys.argv) >= 7:
-		printLog = sys.argv[5].lower() == "true"
+		printLog = sys.argv[5].lower().replace(" ", "") == "true"
 
 	merge(old_file, new_file, new_file_writeTo, delta, mark, printLog)
