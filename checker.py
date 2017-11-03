@@ -189,7 +189,7 @@ def check_speaker_audio(speaker, line_number,word):
 	else:
 	    assert(isValid(speaker))
     except AssertionError:
-	error_log.append([word, line_number, "labeled_object.speaker"])
+        error_log.append([word, line_number, "labeled_object.speaker"])
 
 
 def check_timestamp_audio(timestamp, line_number, word):
