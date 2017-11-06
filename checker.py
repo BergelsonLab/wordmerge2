@@ -259,3 +259,18 @@ def give_error_report_audio(filepath):
     return error_log
 
 
+def give_error_report(filepath):
+    info = []
+    with open(filepath, 'rt') as csvfileR:
+        reader = csv.reader(csvfileR)
+        for row in reader:
+            info.append(row)
+
+    if "word" in info[0]:
+        error_log = give_error_report_audio(info)
+    else:
+        error_log = give_error_report_video(info)
+
+    return error_log
+
+
