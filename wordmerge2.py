@@ -24,6 +24,7 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark, printLog):
     	#Checking for errors for audio file
 		new_error = checker.give_error_report_audio(new_file)
 		old_error = checker.give_error_report_audio(old_file)
+		#cleanBL might be extra, haven't tested yet
 		df_old = cleanBL(df_old, "basic_level")
 		df_new = cleanBL(df_new, "basic_level")
 		df_new, fixCount, caseCount, timeCount = getBasicAudio(df_old, df_new, mark, delta, commonList)
@@ -32,21 +33,26 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark, printLog):
     	#Checking for errors for video file
 		new_error = checker.give_error_report_video(new_file)
 		old_error = checker.give_error_report_video(old_file)
+		#cleanBL might be extra, haven't tested yet
 		df_old = cleanBL(df_old, "labeled_object.basic_level")
 		df_new = cleanBL(df_new, "labeled_object.basic_level")
 		df_new, fixCount, caseCount, timeCount = getBasicVideo(df_old, df_new, mark, delta, commonList)
 		isAudio = False
 
     logPath = newErrorPath(new_file, new_file_writeTo, "log.csv", isAudio)
+
+    #Individual wordmerge run would print log to terminal by default, bash would turn this off
     if printLog:
     	printError(old_error, new_error, logPath)
     	printFix(fixCount, caseCount, timeCount)
+
     writeErrorLog(old_error, new_error, logPath, getFileName(old_file), getFileName(new_file))
     newFileName = newpath(new_file, new_file_writeTo, "wordmerged.csv", isAudio)
     df_new.to_csv(newFileName, index = False)
 
     return fixCount, caseCount, timeCount, isAudio, newFileName, old_error, new_error
 
+#print count for fixme, case, time to terminal 
 def printFix(fixCount, caseCount, timeCount):
 	asterisk = "********************************************************************"
 	nl = "\n"
@@ -55,6 +61,7 @@ def printFix(fixCount, caseCount, timeCount):
 
 	print fixMsg + alert
 
+#print errors to terminal 
 def printError(old_error, new_error, logPath):
 	asterisk = "********************************************************************"
 	nl = "\n"
@@ -74,6 +81,7 @@ def printError(old_error, new_error, logPath):
 
 	print alert + old_errorMsg + new_errorMsg + logMsg + alert
 
+#genearet csv file for error log
 def writeErrorLog(old_error, new_error, logPath, old_fileName, new_fileName):
 	with open(logPath, 'w') as writefile:
 		writer = csv.writer(writefile)
@@ -100,6 +108,7 @@ def cleanBL(df, colname):
 	df[colname] = df[colname].astype(str)
 	return df 
 
+#get error log path inside error folder
 def newErrorPath(new_file, new_file_writeTo, suffix, isAudio):
 	newpathList = re.split("\\\|/", new_file_writeTo)
 	newpathList.append("error")
@@ -110,6 +119,7 @@ def newErrorPath(new_file, new_file_writeTo, suffix, isAudio):
 	pathName += preffix
 	return pathName
 
+#get single file name from path
 def getFileName(path):
 	pathList = re.split("\\\|/", path)
 	fileName = pathList[-1]
@@ -123,6 +133,7 @@ def newpath(new_file, new_file_writeTo, suffix, isAudio):
 	fullName += preffix
 	return fullName
 
+#get unique preffix for each pair of files
 def getPreffix(new_file, suffix, isAudio):
 	fileName = getFileName(new_file)
 	prefList = fileName.split("_")
@@ -134,7 +145,7 @@ def getPreffix(new_file, suffix, isAudio):
 	pref += suffix
 	return pref
 
-
+#combine path list into single path string
 def combinePath(pathList):
 	fullName = "/"
 	for i in range(len(pathList)):
@@ -186,12 +197,15 @@ def getBasicVideo(df_old, df_new, mark, delta, commonList):
 	caseCount = 0
 	fixCount = 0
 	timeCount = 0
+	#get lower case in object column
 	for newr in df_new.index:
 		df_old_lower = lowerDFVideo(df_old)
 		try:
+			#assume case if fixed, see if there is a match
 			temp_df = df_old_lower.loc[df_old_lower["labeled_object.object"] == df_new.get_value(newr, "labeled_object.object").lower(), ["labeled_object.offset", "labeled_object.onset", "labeled_object.basic_level"]]
 			for oldr in temp_df.index:
 				addMark = ""
+				#for those with case issue, add a mark for case
  				if df_old.get_value(oldr, "labeled_object.object") != df_new.get_value(newr, "labeled_object.object"):
  					addMark = "*CASE*"
 				if mark:
@@ -201,12 +215,14 @@ def getBasicVideo(df_old, df_new, mark, delta, commonList):
 			temp_df = temp_df.loc[temp_df["labeled_object.offset"] == df_new.get_value(newr, "labeled_object.offset"), ["labeled_object.basic_level", "labeled_object.onset"]]
 			blValue = temp_df.loc[temp_df["labeled_object.onset"] == df_new.get_value(newr, "labeled_object.onset"), "labeled_object.basic_level"].values[0]
 		except:
+			#code break might be caused by unmatch in object or time, case mark already added for any match term with case change
 			blValue = getTimeChangeVideo(df_old_lower, newr, df_new, mark, delta)
 		if "*CASE*" in blValue:
 			caseCount += 1
 		if "*TIME*" in blValue:
 			timeCount += 1
 		if blValue == "***FIX ME***":
+			#check if in the common word list
 			if df_new.get_value(newr, "labeled_object.object").lower().replace(" ", "") in commonList:
 				blValue = "NA"
 			else:
@@ -217,19 +233,24 @@ def getBasicVideo(df_old, df_new, mark, delta, commonList):
 #check if the timestamp is within the range
 def getTimeChangeVideo(df_old_lower, newr, df_new, mark, delta):
 	temp_df = df_old_lower.loc[df_old_lower["labeled_object.object"] == df_new.get_value(newr, "labeled_object.object").lower().replace(" ", ""), ["labeled_object.offset", "labeled_object.onset", "labeled_object.basic_level"]]
+	#only proceed when there is a match for object column regardless of case
 	if not temp_df.empty:
 		blValue = "***FIX ME***"
+		#for all term that matches for object column but not onset and offset column, try given tolerance to time
 		for oldr in temp_df.index:
 			oldOnset = temp_df.get_value(oldr, "labeled_object.onset")
 			oldOffset = temp_df.get_value(oldr, "labeled_object.offset")
 			newOnset = df_new.get_value(newr, "labeled_object.onset")
 			newOffset = df_new.get_value(newr, "labeled_object.offset")
 			if abs(oldOnset - newOnset) <= delta and abs(oldOffset - newOffset) <= delta:
+				#overwrite fix me when there is a time match given the tolerance
 				blValue = temp_df.get_value(oldr, "labeled_object.basic_level")
 				if mark:
+					#might cause overlapping of different basic_level values with a large time tolerance
 					blValue = blValue + "*TIME*"
 			else:
 				continue
+	#when no match for object column even change case
 	else:
 		blValue = "***FIX ME***"
 	return blValue
@@ -240,12 +261,15 @@ def getBasicAudio(df_old, df_new, mark, delta, commonList):
 	fixCount = 0
 	timeCount = 0
 	for newr in df_new.index:
+		#get lower case in word column
 		df_old_lower = lowerDFAudio(df_old)
 		try:
+			#assume case if fixed, see if there is a match
 			temp_df = df_old_lower.loc[df_old_lower["tier"] == df_new.get_value(newr, "tier"), ["word", "timestamp", "basic_level"]]
  			temp_df = temp_df.loc[temp_df["word"] == df_new.get_value(newr, "word").lower().replace(" ", ""), ["basic_level", "timestamp", "word"]]
  			for oldr in temp_df.index:
  				addMark = ""
+ 				#for those with case issue, add a mark for case
  				if df_old.get_value(oldr, "word") != df_new.get_value(newr, "word"):
  					addMark = "*CASE*"
  				if mark:
@@ -254,12 +278,14 @@ def getBasicAudio(df_old, df_new, mark, delta, commonList):
 	 				temp_df.set_value(oldr, "basic_level", addMark)
  			blValue = temp_df.loc[temp_df["timestamp"] == df_new.get_value(newr, "timestamp"), "basic_level"].values[0]
 		except:
+			#code break might be caused by unmatch in word, tier and time, case mark already added for any match term with case change
 			blValue = getTimeChangeAudio(df_old_lower, df_new, newr, mark, delta)
 		if "*CASE*" in blValue:
 			caseCount += 1
 		if "*TIME*" in blValue:
 			timeCount += 1
 		if blValue == "***FIX ME***":
+			#check if in the common word list
 			if df_new.get_value(newr, "word").lower().replace(" ", "") in commonList:
 				blValue = "NA"
 			else:
@@ -272,8 +298,10 @@ def getBasicAudio(df_old, df_new, mark, delta, commonList):
 def getTimeChangeAudio(df_old_lower, df_new, newr, mark, delta):
 	temp_df = df_old_lower.loc[df_old_lower["tier"] == df_new.get_value(newr, "tier"), ["word", "timestamp", "basic_level"]]
 	temp_df = temp_df.loc[temp_df["word"] == df_new.get_value(newr, "word").lower().replace(" ", ""), ["basic_level", "timestamp"]]
+	#only proceed when there is a match for word column regardless of case and tier column
 	if not temp_df.empty:
 		blValue = "***FIX ME***"
+		#for all term that matches for word and tier column but not timestamp column, try given tolerance to time
 		for oldr in temp_df.index:
 			oldTimestamp = temp_df.get_value(oldr, "timestamp").split("_")
 			newTimestamp = df_new.get_value(newr, "timestamp").split("_")
@@ -282,12 +310,14 @@ def getTimeChangeAudio(df_old_lower, df_new, newr, mark, delta):
 			newOnset = int(newTimestamp[0])
 			newOffset = int(newTimestamp[1])
 			if abs(oldOnset - newOnset) <= delta and abs(oldOffset - newOffset) <= delta:
+				#overwrite fix me when there is a time match given the tolerance
 				blValue = temp_df.get_value(oldr, "basic_level")
 				if mark:
+					#might cause overlapping of different basic_level values with a large time tolerance
 					blValue = blValue + "*TIME*"
 			else:
 				continue
-
+	#when no match for object column or tier column even change case
 	else:
 		blValue = "***FIX ME***"
 	return blValue
@@ -295,13 +325,16 @@ def getTimeChangeAudio(df_old_lower, df_new, newr, mark, delta):
 
 
 if __name__ == "__main__":
+	#default value for last three inputs
 	delta = 0
 	mark = True
 	printLog = True
 
+	#new error list every run
 	new_error = []
-        old_error = []
+	old_error = []
 
+	#input argument from terminal 
 	old_file = sys.argv[1]
 	new_file = sys.argv[2]
 	new_file_writeTo = sys.argv[3]
@@ -312,4 +345,5 @@ if __name__ == "__main__":
 	if len(sys.argv) >= 7:
 		printLog = sys.argv[5].lower().replace(" ", "") == "true"
 
+	#call main merge function
 	merge(old_file, new_file, new_file_writeTo, delta, mark, printLog)

@@ -5,9 +5,9 @@ import re
 import wordmerge2 as wm2
 import datetime
 
+#main function for wordmerge2_bash.py
 def runWordmerge2(old_folder, new_folder):
-	newFileList = []
-	oldFileList = []
+	#initialize values
 	fileCount = []
 	fileError = []
 	delta = 0
@@ -16,27 +16,43 @@ def runWordmerge2(old_folder, new_folder):
 	fixCount = 0
 	caseCount = 0
 	timeCount = 0
+
+	oldFileList, newFileList = separateFiles(old_folder)
+
+	for oldFile in oldFileList:
+		for newFile in newFileList:
+			oldDate = getdates(oldFile)
+			newDate = getdates(newFile)
+			#proceed if match with prefix
+			if oldDate == newDate:
+				#wordmerge2
+				fix, case, time, isAudio, newFileName, old_error, new_error = wm2.merge(oldFile, newFile, new_folder, delta, mark, printLog)
+				#countlist
+				fileCount.append([getFileName(newFileName), fix, case, time])
+				fixCount += fix
+				caseCount += case
+				timeCount += time
+				#errorlist
+				fileError.append(sortError(getFileName(oldFile), old_error, isAudio))
+				fileError.append(sortError(getFileName(newFile), new_error, isAudio))
+	#generate count log and error log csv files
+	writeCountLog(new_folder, fixCount, caseCount, timeCount, fileCount)
+	writeErrorLog(new_folder, fileError, isAudio)
+	#print count summary
+	printFix(fixCount, caseCount, timeCount)
+
+#separate new file from old file
+def separateFiles(old_folder):
+	newFileList = []
+	oldFileList = []
 	for file in os.listdir(old_folder):
 		file = os.path.join(old_folder, file)
 		if file.endswith("sparse_code.csv"):
 			oldFileList.append(file)
 		elif file.endswith("processed.csv"):
 			newFileList.append(file)
-	for oldFile in oldFileList:
-		for newFile in newFileList:
-			oldDate = getdates(oldFile)
-			newDate = getdates(newFile)
-			if oldDate == newDate:
-				fix, case, time, isAudio, newFileName, old_error, new_error = wm2.merge(oldFile, newFile, new_folder, delta, mark, printLog)
-				fileCount.append([getFileName(newFileName), fix, case, time])
-				fixCount += fix
-				caseCount += case
-				timeCount += time
-				fileError.append(sortError(getFileName(oldFile), old_error, isAudio))
-				fileError.append(sortError(getFileName(newFile), new_error, isAudio))
-	writeCountLog(new_folder, fixCount, caseCount, timeCount, fileCount)
-	writeErrorLog(new_folder, fileError, isAudio)
-	printFix(fixCount, caseCount, timeCount)
+	return oldFileList, newFileList
+
 
 
 #get prefix from full path file
@@ -47,6 +63,7 @@ def getdates(file):
 	date = dateList[0] + "_" + dateList[1]
 	return date
 
+#print count to terminal
 def printFix(fixCount, caseCount, timeCount):
 	asterisk = "********************************************************************"
 	nl = "\n"
@@ -55,17 +72,20 @@ def printFix(fixCount, caseCount, timeCount):
 
 	print alert + fixMsg + alert
 
+#get single file name from path
 def getFileName(path):
 	pathList = re.split("\\\|/", path)
 	fileName = pathList[-1]
 	return fileName
 
+#get error summary(count) for each type
 def sortError(file, errorlist, isAudio):
 	if isAudio:
 		return sortAudioError(file, errorlist)
 	else:
 		return sortVideoError(file, errorlist)
 
+#sorterror for audio
 def sortAudioError(file, errorlist):
 	tier = 0
 	word = 0
@@ -91,6 +111,7 @@ def sortAudioError(file, errorlist):
 			basic += 1
 	return [file, repr(tier), repr(word), repr(utter), repr(o_p), repr(speaker), repr(timestamp), repr(basic)]
 
+#sort error for video
 def sortVideoError(file, errorlist):
 	ordinal = 0
 	obj = 0
@@ -122,7 +143,7 @@ def sortVideoError(file, errorlist):
 
 
 
-#print out log file
+#print out count log file
 def writeCountLog(new_folder, fixCount, caseCount, timeCount, fileCount):
 	countRow = ["Total", fixCount, caseCount, timeCount]
 	fullName = getFullName(new_folder, "_count_log.csv")
@@ -133,6 +154,7 @@ def writeCountLog(new_folder, fixCount, caseCount, timeCount, fileCount):
 			writer.writerow(count)
 		writer.writerow(countRow)
 
+#print out error log file
 def writeErrorLog(new_folder, fileError, isAudio):
 	fullName = getFullName(new_folder, "_error_log.csv")
 	if isAudio:
@@ -145,6 +167,7 @@ def writeErrorLog(new_folder, fileError, isAudio):
 		for error in fileError:
 			writer.writerow(error)
 
+#get full path name for new wordmerged files
 def getFullName(new_folder, suffix):
 	pathList = re.split("\\\|/", new_folder) #new_folder.split("/")
 	now = datetime.datetime.now()
