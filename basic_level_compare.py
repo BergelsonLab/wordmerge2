@@ -39,21 +39,18 @@ def compare_basic_level (arg):
     
     #Loop through combined datasets and fill the dataframes
     count = 0
+    both_count = 0
     print("Looping through")
     for index, row in combined_data.iterrows():
         if count == 0:
-            common.append(row)
-            only_big.append(row)
+            common = common.append(row)
+            only_big = only_big.append(row)
         elif row[len(row)-1] == "both":
-            common.append(row)
+            both_count += 1
+            common = common.append(row)
         elif row[len(row)-1] == "left_only":
-            only_big.append(row)
+            only_big = only_big.append(row)
         count += 1
-
-    print(common)
-    print("************")
-    print("************")
-    print(only_big)
 
     #Make the new filenames
     combined_filename = "all_data_in_" + bigger_file + "_and_" + smaller_file + ".csv"
