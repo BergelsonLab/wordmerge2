@@ -26,15 +26,14 @@ def runWordmerge2(old_folder, new_folder):
 			#proceed if match with prefix
 			if oldDate == newDate:
 				#wordmerge2
-				fix, case, time, isAudio, newFileName, old_error, new_error = wm2.merge(oldFile, newFile, new_folder, delta, mark, printLog)
+				fix, case, time, isAudio, newFileName, errorList = wm2.merge(oldFile, newFile, new_folder, delta, mark, printLog)
 				#countlist
 				fileCount.append([getFileName(newFileName), fix, case, time])
 				fixCount += fix
 				caseCount += case
 				timeCount += time
 				#errorlist
-				fileError.append(sortError(getFileName(oldFile), old_error, isAudio))
-				fileError.append(sortError(getFileName(newFile), new_error, isAudio))
+				fileError.append(sortError(getFileName(newFileName), errorList, isAudio))
 	#generate count log and error log csv files
 	writeCountLog(new_folder, fixCount, caseCount, timeCount, fileCount)
 	writeErrorLog(new_folder, fileError, isAudio)
