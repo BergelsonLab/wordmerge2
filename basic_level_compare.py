@@ -39,13 +39,17 @@ def compare_basic_level (arg):
     headers = []
     
     #Loop through combined datasets and fill the lists
-    both_count = 0
     print("Looping through...")
     for index, row in combined_data.iterrows():
         if index == 0:
-            headers.append(row)
+            for entry in row:
+                if entry.contains('_x'):
+                    entry = entry.replace("_x", "_bigfile")
+                elif entry.contains("_y"):
+                    entry = entry.replace("_y", "_smallfile")
+            common_list.append(row)
+            only_big_list.append(row)
         elif row[len(row)-1] == "both":
-            both_count += 1
             common_list.append(row)
         elif row[len(row)-1] == "left_only":
             only_big_list.append(row)
@@ -53,9 +57,7 @@ def compare_basic_level (arg):
     #Make DataFrames from the lists
     print("Making dataframes...")
     common = pd.DataFrame(common_list)
-    common.columns = headers
     only_big = pd.DataFrame(only_big_list)
-    only_big.columns = headers
 
     #Make the new filenames
     combined_filename = "all_data_in_" + bigger_file + "_and_" + smaller_file + ".csv"
@@ -69,7 +71,10 @@ def compare_basic_level (arg):
     common.to_csv(common_filename, header = True)
     print("Convert to csv")
     only_big.to_csv(only_big_filename, header = True)
-    
+
+    #For the only_in file, need to take out row that says it was in both
+    #Need to take out first and last columns
+    #For the common file, need to change _x to _bigfile and _y to _smallfile
 
 if __name__ == "__main__":
     assert len(sys.argv) == 4, "Length of argument must be 4"
