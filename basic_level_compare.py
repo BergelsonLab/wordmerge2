@@ -32,25 +32,30 @@ def compare_basic_level (arg):
         print("Combining data...")
         combined_data = df_big.merge(df_small, how='outer', on=['ordinal', 'object', 'tier', 'onset'], indicator = True)
     
-    print("Making dataframes...")
-    #Make empty dataframes
-    common = pd.DataFrame()
-    only_big = pd.DataFrame()
+    print("Making lists...")
+    #Make empty lists
+    common_list = []
+    only_big_list = []
+    headers = []
     
-    #Loop through combined datasets and fill the dataframes
-    count = 0
+    #Loop through combined datasets and fill the lists
     both_count = 0
-    print("Looping through")
+    print("Looping through...")
     for index, row in combined_data.iterrows():
-        if count == 0:
-            common = common.append(row)
-            only_big = only_big.append(row)
+        if index == 0:
+            headers.append(row)
         elif row[len(row)-1] == "both":
             both_count += 1
-            common = common.append(row)
+            common_list.append(row)
         elif row[len(row)-1] == "left_only":
-            only_big = only_big.append(row)
-        count += 1
+            only_big_list.append(row)
+
+    #Make DataFrames from the lists
+    print("Making dataframes...")
+    common = pd.DataFrame(common_list)
+    common.columns = headers
+    only_big = pd.DataFrame(only_big_list)
+    only_big.columns = headers
 
     #Make the new filenames
     combined_filename = "all_data_in_" + bigger_file + "_and_" + smaller_file + ".csv"
