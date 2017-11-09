@@ -41,18 +41,10 @@ def compare_basic_level (arg):
     #Loop through combined datasets and fill the lists
     print("Looping through...")
     for index, row in combined_data.iterrows():
-        if index == 0:
-            for entry in row:
-                if entry.contains('_x'):
-                    entry = entry.replace("_x", "_bigfile")
-                elif entry.contains("_y"):
-                    entry = entry.replace("_y", "_smallfile")
-            common_list.append(row)
-            only_big_list.append(row)
-        elif row[len(row)-1] == "both":
-            common_list.append(row)
+        if row[len(row)-1] == "both":
+            common_list.append(row[:len(row)-1])
         elif row[len(row)-1] == "left_only":
-            only_big_list.append(row)
+            only_big_list.append(row[:len(row)-1])
 
     #Make DataFrames from the lists
     print("Making dataframes...")
@@ -60,17 +52,15 @@ def compare_basic_level (arg):
     only_big = pd.DataFrame(only_big_list)
 
     #Make the new filenames
-    combined_filename = "all_data_in_" + bigger_file + "_and_" + smaller_file + ".csv"
-    common_filename = "data_common_to" + bigger_file + "_and_" + smaller_file + ".csv"
-    only_big_filename = "data_only_in_" + bigger_file + "_and_not_" + smaller_file + ".csv"
+    combined_filename = "0all_data_in_" + bigger_file + "_and_" + smaller_file + ".csv"
+    common_filename = "0data_common_to" + bigger_file + "_and_" + smaller_file + ".csv"
+    only_big_filename = "0data_only_in_" + bigger_file + "_and_not_" + smaller_file + ".csv"
 
-    #Connvert dataframes to csv filess
-    print("Convert to csv")
-    combined_data.to_csv(combined_filename, header = True)
-    print("Convert to csv")
-    common.to_csv(common_filename, header = True)
-    print("Convert to csv")
-    only_big.to_csv(only_big_filename, header = True)
+    #Connvert dataframes to csv files
+    print("Converting to csv...")
+    combined_data.to_csv(combined_filename, header = True, index= False)
+    common.to_csv(common_filename, header = True, index = False)
+    only_big.to_csv(only_big_filename, header = True, index = False)
 
     #For the only_in file, need to take out row that says it was in both
     #Need to take out first and last columns
