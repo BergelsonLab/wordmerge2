@@ -4,8 +4,8 @@ This is a repo for wordmerge2 python script and its folder version that merges b
 
 - Both can be run directly in terminal or command line using python 2. 
 - Both scripts require `pandas` python package installed.
-- In order to run `wordmerge2_bash.py`, you need to have `wordmerge2.py` in the same folder. 
-- In order to run `wordmerge2_bash.py` and `wordmerge2.py`, you need to have `common_words_index.csv` in the same folder. 
+- In order to run `wordmerge2_batch.py`, you need to have `wordmerge2.py` in the same folder. 
+- In order to run `wordmerge2_batch.py` and `wordmerge2.py`, you need to have `common_words_index.csv` in the same folder. 
 ----
 ## wordmerge2.py
 
@@ -39,8 +39,8 @@ An error log file would also be generated in the `error` subdirectory under the 
   * The default value for *printLog* is `True`. 
   
 ---
-## wordmerge2_bash.py
-For `wordmerge2_bash.py`, it accepts two inputs: *old_folder* and *new_folder*
+## wordmerge2_batch.py
+For `wordmerge2_batch.py`, it accepts two inputs: *old_folder* and *new_folder*
 
 This script runs `wordmerge2.py` for every pair of files that have the same prefix inside the old folder and prints new csv files to the new folder. 
 
