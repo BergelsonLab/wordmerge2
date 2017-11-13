@@ -69,7 +69,7 @@ def printError(errorList, logPath):
 	alert = nl + asterisk + nl + asterisk + nl
 	errorCount = len(errorList)
 
-	errorMsgP = nl + repr(errorCount) + " error(s) are detected in the old file:" + nl + nl
+	errorMsgP = nl + repr(errorCount) + " error(s) are detected in the wordmerged file:" + nl + nl
 	for error in errorList:
 		errorMsg = error[2] + " in row " + error[1] + " with word \"" + error[0] + "\""
 		errorMsgP = errorMsgP + errorMsg + nl
