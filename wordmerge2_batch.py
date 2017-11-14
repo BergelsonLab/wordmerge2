@@ -1,7 +1,6 @@
 import sys
 import os
 import csv
-import re
 import wordmerge2 as wm2
 import datetime
 
@@ -26,14 +25,15 @@ def runWordmerge2(old_folder, new_folder):
 			#proceed if match with prefix
 			if oldDate == newDate:
 				#wordmerge2
-				fix, case, time, isAudio, newFileName, errorList = wm2.merge(oldFile, newFile, new_folder, delta, mark, printLog)
+				fix, case, time, isAudio, newPathName, errorList = wm2.merge(oldFile, newFile, new_folder, delta, mark, printLog)
 				#countlist
-				fileCount.append([getFileName(newFileName), fix, case, time])
+				newFileName = os.path.basename(newPathName)
+				fileCount.append([newFileName, fix, case, time])
 				fixCount += fix
 				caseCount += case
 				timeCount += time
 				#errorlist
-				fileError.append(sortError(getFileName(newFileName), errorList, isAudio))
+				fileError.append(sortError(newFileName, errorList, isAudio))
 	#generate count log and error log csv files
 	writeCountLog(new_folder, fixCount, caseCount, timeCount, fileCount)
 	writeErrorLog(new_folder, fileError, isAudio)
@@ -56,8 +56,7 @@ def separateFiles(old_folder):
 
 #get prefix from full path file
 def getdates(file):
-	pathList = re.split("\\\|/", file) #file.split("/")
-	fileName = pathList[-1]
+	fileName = os.path.basename(file)
 	dateList = fileName.split("_")
 	date = dateList[0] + "_" + dateList[1]
 	return date
@@ -70,12 +69,6 @@ def printFix(fixCount, caseCount, timeCount):
 	fixMsg = "TOTAL:" + nl + repr(fixCount) + " ***FIX ME***, " + repr(caseCount) + " *CASE*, " + repr(timeCount) + " *TIME* "
 
 	print alert + fixMsg + alert
-
-#get single file name from path
-def getFileName(path):
-	pathList = re.split("\\\|/", path)
-	fileName = pathList[-1]
-	return fileName
 
 #get error summary(count) for each type
 def sortError(file, errorlist, isAudio):
@@ -168,18 +161,16 @@ def writeErrorLog(new_folder, fileError, isAudio):
 
 #get full path name for new wordmerged files
 def getFullName(new_folder, suffix):
-	pathList = re.split("\\\|/", new_folder) #new_folder.split("/")
+	pathList = os.path.split(new_folder)
 	now = datetime.datetime.now()
 	currentD = datetime.date(now.year, now.month, now.day)
 	fileName = currentD.isoformat() + suffix
-	fullName = "/"
-	for i in range(len(pathList)):
-		if not pathList[i]:
-			continue
-		fullName += pathList[i]
-		fullName += "/"
-	fullName += fileName
-	return fullName
+	if pathList[1]:
+		pathName = os.path.join(pathList[0], pathList[1], fileName)
+	else:
+		pathName = os.path.join(pathList[0], fileName)
+
+	return pathName
 
 
 if __name__ == "__main__":

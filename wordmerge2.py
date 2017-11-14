@@ -2,7 +2,6 @@ import sys
 import csv
 import pandas as pd
 import codecheck
-import re
 import os
 
 comment = "%com:"
@@ -49,7 +48,7 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark, printLog):
     	printError(errorList, logPath)
     	printFix(fixCount, caseCount, timeCount)
 
-    writeErrorLog(errorList, logPath, getFileName(old_file), getFileName(new_file))
+    writeErrorLog(errorList, logPath, newFileName)
 
     return fixCount, caseCount, timeCount, isAudio, newFileName, errorList
 
@@ -78,12 +77,13 @@ def printError(errorList, logPath):
 	print alert + errorMsgP + logMsg + alert
 
 #genearet csv file for error log
-def writeErrorLog(errorList, logPath, old_fileName, new_fileName):
+def writeErrorLog(errorList, logPath, newpath):
+	newFileName = os.path.basename(newpath)
 	with open(logPath, 'w') as writefile:
 		writer = csv.writer(writefile)
 		writer.writerow(["file", "word", "row", "column_name"]) #need to keep an eye on the row number
 		for error in errorList:
-			writer.writerow([old_fileName] + error)
+			writer.writerow([newFileName] + error)
 
 #get NA list
 def commonNA(common_file):
@@ -104,32 +104,31 @@ def cleanBL(df, colname):
 
 #get error log path inside error folder
 def newErrorPath(new_file, new_file_writeTo, suffix, isAudio):
-	newpathList = re.split("\\\|/", new_file_writeTo)
-	newpathList.append("error")
-	pathName = combinePath(newpathList)
+	newpathList = os.path.split(new_file_writeTo)
+	if newpathList[1]:
+		pathName = os.path.join(newpathList[0], newpathList[1], "error")
+	else:
+		pathName = os.path.join(newpathList[0], "error")
 	if not os.path.exists(pathName):
 		os.makedirs(pathName)
 	preffix = getPreffix(new_file, suffix, isAudio)
-	pathName += preffix
+	pathName = os.path.join(pathName, preffix)
 	return pathName
 
-#get single file name from path
-def getFileName(path):
-	pathList = re.split("\\\|/", path)
-	fileName = pathList[-1]
-	return fileName
 
 #get new_file_writeTo path
 def newpath(new_file, new_file_writeTo, suffix, isAudio):
 	preffix = getPreffix(new_file, suffix, isAudio)
-	newpathList = re.split("\\\|/", new_file_writeTo)
-	fullName = combinePath(newpathList)
-	fullName += preffix
-	return fullName
+	newpathList = os.path.split(new_file_writeTo)
+	if newpathList[1]:
+		pathName = os.path.join(newpathList[0], newpathList[1], preffix)
+	else:
+		pathName = os.path.join(newpathList[0], preffix)
+	return pathName
 
 #get unique preffix for each pair of files
 def getPreffix(new_file, suffix, isAudio):
-	fileName = getFileName(new_file)
+	fileName = os.path.basename(new_file)
 	prefList = fileName.split("_")
 	pref = prefList[0] + "_" + prefList[1] + "_"
 	if isAudio:
@@ -138,16 +137,6 @@ def getPreffix(new_file, suffix, isAudio):
 		pref += "video" + "_"
 	pref += suffix
 	return pref
-
-#combine path list into single path string
-def combinePath(pathList):
-	fullName = "/"
-	for i in range(len(pathList)):
-		if ".csv" in pathList[i] or not pathList[i]:
-			continue
-		fullName += pathList[i]
-		fullName += "/"
-	return fullName
 
 
 #clean csv file for pandas reading
