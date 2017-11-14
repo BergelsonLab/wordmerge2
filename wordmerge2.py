@@ -2,7 +2,6 @@ import sys
 import csv
 import pandas as pd
 import codecheck
-import re
 import os
 
 comment = "%com:"
