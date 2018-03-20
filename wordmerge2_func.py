@@ -7,6 +7,14 @@ import os
 comment = "%com:"
 error_log = []
 
+#get rid of asterisk in tier/add asterisk
+def astDFAudio(df):
+	df_ast = df
+	for r in range(0, len(df_ast.index)):
+		tier = df_ast.get_value(r, "tier")
+        df_ast.set_value(r, "tier", tier.replace("*", ""))
+	return df_ast
+
 
 #print count for fixme, case, time to terminal
 def printFix(fixCount, caseCount, timeCount):

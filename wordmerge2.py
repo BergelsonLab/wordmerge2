@@ -27,12 +27,16 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark, printLog):
 		#cleanBL might be extra, haven't tested yet
 		df_old = wm2.cleanBL(df_old, "basic_level")
 		df_new = wm2.cleanBL(df_new, "basic_level")
+        df_old = wm2.astDFAudio(df_old)
+        df_new = wm2.astDFAudio(df_new)
 		df_new, fixCount, caseCount, timeCount = wm2.getBasicAudio(df_old, df_new, mark, delta, commonList)
 		isAudio = True
     else:
 		#cleanBL might be extra, haven't tested yet
 		df_old = wm2.cleanBL(df_old, "labeled_object.basic_level")
 		df_new = wm2.cleanBL(df_new, "labeled_object.basic_level")
+        df_old = wm2.astDFVideo(df_old)
+        df_new = wm2.astDFVideo(df_new)
 		df_new, fixCount, caseCount, timeCount = wm2.getBasicVideo(df_old, df_new, mark, delta, commonList)
 		isAudio = False
 
@@ -79,10 +83,6 @@ if __name__ == "__main__":
 	delta = 0
 	mark = True
 	printLog = True
-
-	#new error list every run
-	new_error = []
-	old_error = []
 
 	#input argument from terminal
 	old_file = sys.argv[1]
