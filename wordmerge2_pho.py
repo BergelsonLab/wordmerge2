@@ -98,22 +98,22 @@ def clean(file):
 			writer.writerow(n)
 
 
-if __name__ == "__main__":
-	#default value for last three inputs
-	delta = 0
-	mark = True
-	printLog = True
-
-	#input argument from terminal
-	old_file = sys.argv[1]
-	new_file = sys.argv[2]
-	new_file_writeTo = sys.argv[3]
-	if len(sys.argv) >= 5:
-		delta = int(sys.argv[4])
-	if len(sys.argv) >= 6:
-		mark = sys.argv[5].lower() == "true"
-	if len(sys.argv) >= 7:
-		printLog = sys.argv[5].lower() == "true"
-
-	#call main merge function
-	merge(old_file, new_file, new_file_writeTo, delta, mark, printLog)
+# if __name__ == "__main__":
+# 	#default value for last three inputs
+# 	delta = 0
+# 	mark = True
+# 	printLog = True
+#
+# 	#input argument from terminal
+# 	old_file = sys.argv[1]
+# 	new_file = sys.argv[2]
+# 	new_file_writeTo = sys.argv[3]
+# 	if len(sys.argv) >= 5:
+# 		delta = int(sys.argv[4])
+# 	if len(sys.argv) >= 6:
+# 		mark = sys.argv[5].lower() == "true"
+# 	if len(sys.argv) >= 7:
+# 		printLog = sys.argv[6].lower() == "true"
+#
+# 	#call main merge function
+# 	merge(old_file, new_file, new_file_writeTo, delta, mark, printLog)
