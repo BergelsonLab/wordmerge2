@@ -1,11 +1,12 @@
 import sys
 import os
 import csv
-import wordmerge2 as wm2
+import wordmerge2_bl as bl
+import wordmerge2_pho as pho
 import datetime
 
 #main function for wordmerge2_bash.py
-def runWordmerge2(old_folder, new_folder):
+def runWordmerge2(old_folder, new_folder, isPho):
 	#initialize values
 	fileCount = []
 	fileError = []
@@ -16,7 +17,7 @@ def runWordmerge2(old_folder, new_folder):
 	caseCount = 0
 	timeCount = 0
 
-	oldFileList, newFileList = separateFiles(old_folder)
+	oldFileList, newFileList = separateFiles(old_folder, isPho)
 
 	for oldFile in oldFileList:
 		for newFile in newFileList:
@@ -25,10 +26,14 @@ def runWordmerge2(old_folder, new_folder):
 			#proceed if match with prefix
 			if oldDate == newDate:
 				#wordmerge2
-				fix, case, time, isAudio, newPathName, errorList = wm2.merge(oldFile, newFile, new_folder, delta, mark, printLog)
+				if isPho:
+					fix, case, time, isAudio, newPathName, errorList = pho.merge(oldFile, newFile, new_folder, delta, mark, printLog)
+				else:
+					fix, case, time, isAudio, newPathName, errorList = bl.merge(oldFile, newFile, new_folder, delta, mark, printLog)
 				#countlist
 				newFileName = os.path.basename(newPathName)
 				fileCount.append([newFileName, fix, case, time])
+				print fixCount
 				fixCount += fix
 				caseCount += case
 				timeCount += time
@@ -41,15 +46,26 @@ def runWordmerge2(old_folder, new_folder):
 	printFix(fixCount, caseCount, timeCount)
 
 #separate new file from old file
-def separateFiles(old_folder):
+def separateFiles(old_folder, isPho):
 	newFileList = []
 	oldFileList = []
-	for file in os.listdir(old_folder):
-		file = os.path.join(old_folder, file)
-		if file.endswith("sparse_code.csv"):
-			oldFileList.append(file)
-		elif file.endswith("processed.csv"):
-			newFileList.append(file)
+	if isPho:
+		for file in os.listdir(old_folder):
+			file = os.path.join(old_folder ,file)
+			with open(file, 'rU') as readfile:
+				reader = csv.reader(readfile)
+				rowlist = [l for l in reader]
+				if "pho" in rowlist[0] or "labeled_object.pho" in rowlist[0]:
+					newFileList.append(file)
+				else:
+					oldFileList.append(file)
+	else:
+		for file in os.listdir(old_folder):
+			file = os.path.join(old_folder, file)
+			if file.endswith("sparse_code.csv"):
+				oldFileList.append(file)
+			elif file.endswith("processed.csv"):
+				newFileList.append(file)
 	return oldFileList, newFileList
 
 
@@ -172,11 +188,13 @@ def getFullName(new_folder, suffix):
 
 	return pathName
 
-
-if __name__ == "__main__":
-	
-
-	old_folder = sys.argv[1]
-	new_folder = sys.argv[2]
-
-	runWordmerge2(old_folder, new_folder)
+#
+# if __name__ == "__main__":
+#
+#
+# 	old_folder = sys.argv[1]
+# 	new_folder = sys.argv[2]
+# 	if len(sys.argv) >= 4:
+# 		pho = sys.argv[5].lower() == "true"
+#
+# 	runWordmerge2(old_folder, new_folder)
