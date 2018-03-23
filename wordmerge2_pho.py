@@ -12,7 +12,7 @@ error_log = []
 #from old_file and returns dataframe of new_file
 #parameters: old file path, new file path, error range allowed for timestemp,
 def merge(bl_file, pho_file, new_file_writeTo, delta, mark, printLog):
-    print "\n" + "merging {} --and-- {} .....".format(old_file, new_file) + "\n"
+    print "\n" + "merging {} --and-- {} .....".format(bl_file, pho_file) + "\n"
     #clean csv file
     clean(bl_file)
     clean(pho_file)
@@ -89,9 +89,12 @@ def clean(file):
 	with open(file, 'rU') as readfile:
 		reader = csv.reader(readfile)
 		rowlist = [l for l in reader]
-		for row in rowlist:
-			if row[-1] == "":
-				del row[-1]
+        rlen = len(rowlist[0])
+        for row in rowlist:
+            if row[-1] == "":
+                del row[-1]
+            if len(row) > rlen:
+                del row[rlen:]
 	with open(file, 'wb') as writefile:
 		writer = csv.writer(writefile)
 		for n in rowlist:

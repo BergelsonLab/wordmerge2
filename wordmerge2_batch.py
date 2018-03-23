@@ -6,7 +6,7 @@ import wordmerge2_pho as pho
 import datetime
 
 #main function for wordmerge2_bash.py
-def runWordmerge2(old_folder, new_folder, pho):
+def runWordmerge2(old_folder, new_folder, isPho):
 	#initialize values
 	fileCount = []
 	fileError = []
@@ -17,7 +17,7 @@ def runWordmerge2(old_folder, new_folder, pho):
 	caseCount = 0
 	timeCount = 0
 
-	oldFileList, newFileList = separateFiles(old_folder, pho)
+	oldFileList, newFileList = separateFiles(old_folder, isPho)
 
 	for oldFile in oldFileList:
 		for newFile in newFileList:
@@ -26,13 +26,14 @@ def runWordmerge2(old_folder, new_folder, pho):
 			#proceed if match with prefix
 			if oldDate == newDate:
 				#wordmerge2
-				if pho:
+				if isPho:
 					fix, case, time, isAudio, newPathName, errorList = pho.merge(oldFile, newFile, new_folder, delta, mark, printLog)
 				else:
 					fix, case, time, isAudio, newPathName, errorList = bl.merge(oldFile, newFile, new_folder, delta, mark, printLog)
 				#countlist
 				newFileName = os.path.basename(newPathName)
 				fileCount.append([newFileName, fix, case, time])
+				print fixCount
 				fixCount += fix
 				caseCount += case
 				timeCount += time
@@ -45,15 +46,16 @@ def runWordmerge2(old_folder, new_folder, pho):
 	printFix(fixCount, caseCount, timeCount)
 
 #separate new file from old file
-def separateFiles(old_folder, pho):
+def separateFiles(old_folder, isPho):
 	newFileList = []
 	oldFileList = []
-	if pho:
+	if isPho:
 		for file in os.listdir(old_folder):
+			file = os.path.join(old_folder ,file)
 			with open(file, 'rU') as readfile:
 				reader = csv.reader(readfile)
 				rowlist = [l for l in reader]
-				if "pho" in rowlist[0]:
+				if "pho" in rowlist[0] or "labeled_object.pho" in rowlist[0]:
 					newFileList.append(file)
 				else:
 					oldFileList.append(file)
