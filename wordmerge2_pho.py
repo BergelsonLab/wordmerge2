@@ -89,9 +89,12 @@ def clean(file):
 	with open(file, 'rU') as readfile:
 		reader = csv.reader(readfile)
 		rowlist = [l for l in reader]
-        rlen = len(rowlist[0])
+        head = rowlist[0]
+        while head[-1] == "":
+            del head[-1]
+        rlen = len(head)
         for row in rowlist:
-            if row[-1] == "":
+            while row[-1] == "":
                 del row[-1]
             if len(row) > rlen:
                 del row[rlen:]
