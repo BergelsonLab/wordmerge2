@@ -24,32 +24,37 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark, printLog):
     commonList = wm2.commonNA(common_file)
 
     if "word" in list(df_old):
-		#cleanBL might be extra, haven't tested yet
+        print('yes word')
+       #cleanBL might be extra, haven't tested yet
         df_old = wm2.cleanBL(df_old, "basic_level")
         df_new = wm2.cleanBL(df_new, "basic_level")
-        df_old = wm2.astDFAudio(df_old)
-        df_new = wm2.astDFAudio(df_new)
+
+        #if asterisk needed to be re;oved fro; tier
+        #df_old = wm2.astDFAudio(df_old)
+        #df_new = wm2.astDFAudio(df_new)
+
         df_new, fixCount, caseCount, timeCount = wm2.getBasicAudio(df_old, df_new, mark, delta, commonList)
         isAudio = True
     else:
-		#cleanBL might be extra, haven't tested yet
-		df_old = wm2.cleanBL(df_old, "labeled_object.basic_level")
-		df_new = wm2.cleanBL(df_new, "labeled_object.basic_level")
-		df_new, fixCount, caseCount, timeCount = wm2.getBasicVideo(df_old, df_new, mark, delta, commonList)
-		isAudio = False
+        #cleanBL might be extra, haven't tested yet
+        df_old = wm2.cleanBL(df_old, "labeled_object.basic_level")
+        df_new = wm2.cleanBL(df_new, "labeled_object.basic_level")
+        df_new, fixCount, caseCount, timeCount = wm2.getBasicVideo(df_old, df_new, mark, delta, commonList)
+        isAudio = False
 
-	#generate wordmerged csv file
+    #generate wordmerged csv file
     newFileName = wm2.newpath(new_file, new_file_writeTo, "wordmerged.csv", isAudio)
     df_new.to_csv(newFileName, index = False)
 
     errorList = wm2.give_error_report(newFileName)
+    print(errorList)
 
     logPath = wm2.newErrorPath(new_file, new_file_writeTo, "log.csv", isAudio)
 
     #Individual wordmerge run would print log to terminal by default, bash would turn this off
     if printLog:
-    	wm2.printError(errorList, logPath)
-    	wm2.printFix(fixCount, caseCount, timeCount)
+        wm2.printError(errorList, logPath)
+        wm2.printFix(fixCount, caseCount, timeCount)
 
     wm2.writeErrorLog(errorList, logPath, newFileName)
 
@@ -58,46 +63,52 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark, printLog):
 
 #clean csv file for pandas reading
 def clean(file):
-	rowlist = list()
-	with open(file, 'rU') as readfile:
-		reader = csv.reader(readfile)
-		rowlist = [l for l in reader]
+    rowlist = list()
+    with open(file, 'rU') as readfile:
+        reader = csv.reader(readfile)
+        rowlist = [l for l in reader]
         head = rowlist[0]
         while head[-1] == "":
             del head[-1]
+        else:
+            print 'modif 1'
         rlen = len(head)
         for row in rowlist:
             while row[-1] == "":
                 del row[-1]
             if len(row) > rlen:
                 del row[rlen:]
-		if "basic_level" not in rowlist[0]:
-			if "labeled_object.basic_level" not in rowlist[0]:
-				if "word" in rowlist[0]:
-					rowlist[0].append('basic_level')
-				else:
-					rowlist[0].append("labeled_object.basic_level")
-	with open(file, 'wb') as writefile:
-		writer = csv.writer(writefile)
-		for n in rowlist:
-			writer.writerow(n)
+        else:
+            print 'modif 2'
+        if "basic_level" not in rowlist[0]:
+            if "labeled_object.basic_level" not in rowlist[0]:
+                if "word" in rowlist[0]:
+                    rowlist[0].append('basic_level')
+                    print 'modif 3'
+                else:
+                    rowlist[0].append("labeled_object.basic_level")
+                    print('modif 4')
+    with open(file, 'wb') as writefile:
+        writer = csv.writer(writefile)
+        for n in rowlist:
+            writer.writerow(n)
 
 # if __name__ == "__main__":
-# 	#default value for last three inputs
-# 	delta = 0
-# 	mark = True
-# 	printLog = True
+#     #default value for last three inputs
+#     delta = 0
+#     mark = True
+#     printLog = True
 #
-# 	#input argument from terminal
-# 	old_file = sys.argv[1]
-# 	new_file = sys.argv[2]
-# 	new_file_writeTo = sys.argv[3]
-# 	if len(sys.argv) >= 5:
-# 		delta = int(sys.argv[4])
-# 	if len(sys.argv) >= 6:
-# 		mark = sys.argv[5].lower() == "true"
-# 	if len(sys.argv) >= 7:
-# 		printLog = sys.argv[6].lower() == "true"
+#     #input argument from terminal
+#     old_file = sys.argv[1]
+#     new_file = sys.argv[2]
+#     new_file_writeTo = sys.argv[3]
+#     if len(sys.argv) >= 5:
+#         delta = int(sys.argv[4])
+#     if len(sys.argv) >= 6:
+#         mark = sys.argv[5].lower() == "true"
+#     if len(sys.argv) >= 7:
+#         printLog = sys.argv[6].lower() == "true"
 #
-# 	#call main merge function
-# 	merge(old_file, new_file, new_file_writeTo, delta, mark, printLog)
+#     #call main merge function
+#     merge(old_file, new_file, new_file_writeTo, delta, mark, printLog)

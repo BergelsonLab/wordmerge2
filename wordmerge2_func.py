@@ -8,11 +8,12 @@ comment = "%com:"
 error_log = []
 
 #get rid of asterisk in tier/add asterisk
+#FIXME not working - only does it for one row (last one)
 def astDFAudio(df):
 	df_ast = df
 	for r in range(0, len(df_ast.index)):
 		tier = df_ast.get_value(r, "tier")
-        df_ast.set_value(r, "tier", tier.replace("*", ""))
+		df_ast.set_value(r, "tier", tier.replace("*", ""))
 	return df_ast
 
 
@@ -186,8 +187,10 @@ def getBasicAudio(df_old, df_new, mark, delta, commonList):
 	caseCount = 0
 	fixCount = 0
 	timeCount = 0
+
 	for newr in df_new.index:
 		#get lower case in word column
+		#FIXME why not once before the loop?
 		df_old_lower = lowerDFAudio(df_old)
 		try:
 			#assume case if fixed, see if there is a match
@@ -281,7 +284,8 @@ def give_error_report_video(info):
     total_lines = len(video_info)
     line_number = 1
     for row in video_info:
-        if not line_number == 1:
+
+    	if not line_number == 1:
 
             if not codecheck.check_ordinal_video(row[ordinalI], total_lines, ordinal_list):
                 error_log.append([row[objI], str(line_number), "labeled_object.ordinal"])
@@ -311,6 +315,7 @@ def give_error_report_video(info):
                     error_log.append([row[objI], str(line_number), "labeled_object.basic_level"])
 
         line_number += 1
+
     return error_log
 
 
@@ -367,6 +372,7 @@ def give_error_report_audio(info):
                 	error_log.append([row[wordI], str(line_number), "basic_level"])
 
         line_number += 1
+        print('!',error_log)
     return error_log
 
 # read in csv file and call the right function based on the file type
