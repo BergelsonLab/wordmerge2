@@ -372,7 +372,6 @@ def give_error_report_audio(info):
                 	error_log.append([row[wordI], str(line_number), "basic_level"])
 
         line_number += 1
-        print('!',error_log)
     return error_log
 
 # read in csv file and call the right function based on the file type

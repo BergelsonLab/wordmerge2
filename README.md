@@ -3,7 +3,7 @@
 This is a repo for wordmerge2 python script and its folder version that merges basic level from old file to new file in a newly-generated csv file.
 
 - The script can be run directly in terminal or command line using python 2.
-- It require `pandas` python package installed.
+- It requires `pandas` python package installed, as well as `codecheck` (https://github.com/SeedlingsBabylab/codecheck).
 - In order to run the script, you need to have `common_words_index.csv` in the same folder.
 - The main script is `wordmerge2.py`; other scripts need to be in the same folder as the main script and can be accessed by the main script through flags.
 ----
