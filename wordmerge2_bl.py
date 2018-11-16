@@ -39,6 +39,7 @@ def merge(old_file, new_file, new_file_writeTo, delta, mark, printLog):
         #cleanBL might be extra, haven't tested yet
         df_old = wm2.cleanBL(df_old, "labeled_object.basic_level")
         df_new = wm2.cleanBL(df_new, "labeled_object.basic_level")
+        print(df_old.columns.values)
         df_new, fixCount, caseCount, timeCount = wm2.getBasicVideo(df_old, df_new, mark, delta, commonList)
         isAudio = False
 

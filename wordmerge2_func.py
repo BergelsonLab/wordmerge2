@@ -127,6 +127,7 @@ def getBasicVideo(df_old, df_new, mark, delta, commonList):
 	#get lower case in object column
 	for newr in df_new.index:
 		df_old_lower = lowerDFVideo(df_old)
+		print('old lower', df_old_lower.columns.values)
 		try:
 			#assume case if fixed, see if there is a match
 			temp_df = df_old_lower.loc[df_old_lower["labeled_object.object"] == df_new.get_value(newr, "labeled_object.object").lower(), ["labeled_object.offset", "labeled_object.onset", "labeled_object.basic_level"]]
@@ -159,6 +160,7 @@ def getBasicVideo(df_old, df_new, mark, delta, commonList):
 
 #check if the timestamp is within the range
 def getTimeChangeVideo(df_old_lower, newr, df_new, mark, delta):
+	print('old_nwe 2',df_new.columns.values)
 	temp_df = df_old_lower.loc[df_old_lower["labeled_object.object"] == df_new.get_value(newr, "labeled_object.object").lower(), ["labeled_object.offset", "labeled_object.onset", "labeled_object.basic_level"]]
 	#only proceed when there is a match for object column regardless of case
 	if not temp_df.empty:
