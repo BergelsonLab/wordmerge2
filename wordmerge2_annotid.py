@@ -41,8 +41,12 @@ if __name__ == "__main__":
             if word == old_row['word']:
                 print("old", word)
                 # check codes as well to know if something changed?
-                merged_df = merged_df.append(old_row)
-
+                to_add['basic_level'] = old_row['basic_level']
+                merged_df = merged_df.append(to_add)
+            else:
+                print("old but different", word)
+                to_add['basic_level'] = bl_value
+                merged_df = merged_df.append(to_add)
 
         else: # if the id is new: no info to retrieve, add row from new
             if word != '':
