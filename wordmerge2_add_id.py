@@ -32,6 +32,7 @@ def create_merged(old_path, id_path, out_path):
     if merged.isnull().sum().sum() !=0:
         new_word = True
     merged = merged.fillna("***FIXME***")
+    merged = merged.drop_duplicates()
     # save new csv
     merged.to_csv(out_path, index=False)
 
