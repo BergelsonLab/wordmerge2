@@ -97,7 +97,7 @@ if __name__ == "__main__":
             print(old, new, out)
             name_errors.append(old)
 
-    with open("errors.txt", "w+") as f:
+    with open("audio_errors.txt", "w+") as f:
         f.write("count")
         for l in count_errors:
             f.write(l)

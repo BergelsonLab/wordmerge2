@@ -71,3 +71,24 @@ $ python wordmerge2.py bl_file pho_file new_file_writeTo delta mark printLog -ph
 ```bash
 $ python wordmerge2.py old_folder new_folder -batch -pho
 ```
+
+
+## wordmerge2_annotid.py
+
+/!\\ FOR CHA/AUDIO for now
+
+### Usage
+
+`$ python wordmerge2_annotid.py path/to/old.csv path/to/new.csv path/to/output.csv`
+
+Merge old basic level with new; merge done on annotation ids.
+
+## wordmerge2_add_id.py
+
+/!\\ FOR CHA/AUDIO
+
+### Usage
+
+`python wordmerge2_add_id.py path/to/home_visit_path.txt`
+
+One time script to add annotation id to current bl csv; creates a dictionary word:bl and uses it to fill the bl column in the csv WITH annotation IDs. Outputs a errors.txt file, containing the files in which: 1. a word has two different bl 2. a new word appeared in the new csv 3. one of the old/new files does not exist [only the last one is an actual error, the two others should be warnings]
