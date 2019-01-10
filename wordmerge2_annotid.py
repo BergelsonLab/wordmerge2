@@ -73,12 +73,12 @@ def create_merged(file_old, file_new, file_merged): #, mode):
                 break
 
         else: # if the id is new: no info to retrieve, add row from new
+        # print(word)
             if word != '':
                 # print("new", word)
                 to_add[basic_level_col] = bl_value
                 merged_df = merged_df.append(to_add)
                 new_word = True
-                break
     # print(merged_df)
     merged_df.to_csv(file_merged)
 
@@ -102,7 +102,7 @@ if __name__ == "__main__":
         out = sys.argv[3]
         if len(sys.argv)>=5:
             mode = sys.argv[4]
-            
+
         if old and out and new:
             old_error, edit_word, new_word = create_merged(old, new, out)
 
