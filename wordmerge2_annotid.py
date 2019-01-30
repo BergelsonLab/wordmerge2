@@ -84,7 +84,7 @@ def create_merged(file_old, file_new, file_merged, mode="audio"):
                 merged_df = merged_df.append(to_add)
                 new_word = True
     # print(merged_df)
-    merged_df.to_csv(file_merged)
+    merged_df.to_csv(file_merged, index=False)
 
     return old_error, edit_word, new_word
 
@@ -98,7 +98,10 @@ if __name__ == "__main__":
     today = str(datetime.datetime.now().year)+"_" \
             + str(datetime.datetime.now().month)+"_" \
             + str(datetime.datetime.now().day)+"_"
-
+            
+        """
+        Do everything needed if only file by file
+        """
     # if only one file
     if len(sys.argv) >= 4:
         old = sys.argv[1]
@@ -110,9 +113,6 @@ if __name__ == "__main__":
         if old and out and new:
             old_error, edit_word, new_word = create_merged(old, new, out, mode)
 
-        """
-        Do everything needed if only file by file
-        """
 
     # if all files ## <4 because mode could be added
     if len(sys.argv) >= 2 and len(sys.argv)<4:
