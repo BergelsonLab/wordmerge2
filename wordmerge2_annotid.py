@@ -5,22 +5,26 @@ from shutil import move
 
 ## write functions based on audio or not audio
 
-def create_merged(file_old, file_new, file_merged): #, mode):
+def create_merged(file_old, file_new, file_merged, mode="audio"):
+    print(mode)
     bl_value = "***FIX ME***"
-    """
-    if audio:
-        annotid = "annotid"
-        word = "word"
+    # """
+    if mode=="audio":
+        annotid_col = "annotid"
+        word_col = "word"
         basic_level_col = "basic_level"
-    if video:
-        annotid = "labeled_object.id"
-        word = "labeled_object.object"
+    elif mode=="video":
+        annotid_col = "labeled_object.id"
+        word_col = "labeled_object.object"
         basic_level_col = "labeled_object.basic_level" # or just basic_level?
-    """
+    else:
+        print("Wrong mode value")
+        return [], [], []
+    # """
 
-    annotid_col = "annotid"
-    word_col = "word"
-    basic_level_col = "basic_level"
+    # annotid_col = "annotid"
+    # word_col = "word"
+    # basic_level_col = "basic_level"
 
     old_error = False
     edit_word = False
@@ -29,7 +33,7 @@ def create_merged(file_old, file_new, file_merged): #, mode):
     old_df = pd.read_csv(file_old, keep_default_na=False)
     new_df = pd.read_csv(file_new, keep_default_na=False)
 
-    merged_df = pd.DataFrame(columns = new_df.columns.values)
+    merged_df = pd.DataFrame(columns = old_df.columns.values)
     #df = df.rename(columns={'oldName1': 'newName1'})
     for index, new_row in new_df.iterrows():
 
@@ -104,7 +108,7 @@ if __name__ == "__main__":
             mode = sys.argv[4]
 
         if old and out and new:
-            old_error, edit_word, new_word = create_merged(old, new, out)
+            old_error, edit_word, new_word = create_merged(old, new, out, mode)
 
         """
         Do everything needed if only file by file
@@ -124,12 +128,17 @@ if __name__ == "__main__":
             line = line.strip()
 
             # get name of old .csv file (with bl)+path to merged
+            # old_path = line+"/Analysis/Audio_Analysis/"
             old_path = line+"/Analysis/Audio_Analysis/"
             for csv_file in os.listdir(old_path):
+            # for csv_file in os.listdir(os.path.join(old_path, "old_files")):
                 if csv_file.endswith("audio_sparse_code.csv"):
+                # if csv_file.startswith("2019_1_8"): ## for one time fixing error
                     move(os.path.join(old_path, csv_file), os.path.join(old_path, "old_files", today+csv_file))
                     old = os.path.join(old_path, "old_files", today+csv_file)
+                    # old = os.path.join(old_path, "old_files", csv_file)
                     out = os.path.join(old_path, csv_file)
+                    # out = os.path.join(old_path, csv_file[9:])
 
             # get name of new .csv file (no bl)
             new_path = line+"/Coding/Audio_Annotation/"
@@ -139,7 +148,7 @@ if __name__ == "__main__":
 
             # compute merge
             if old and out and new:
-                old_error, edit_word, new_word = create_merged(old, new, out)
+                old_error, edit_word, new_word = create_merged(old, new, out, mode)
                 if old_error:
                     old_error_list.append(line)
                 if edit_word:
