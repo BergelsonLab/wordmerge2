@@ -2,11 +2,13 @@ import sys, os
 import pandas as pd
 import datetime
 from shutil import move
+import csv
 
 ## write functions based on audio or not audio
 
 def create_merged(file_old, file_new, file_merged, mode="audio"):
     print(mode)
+    print(file_old)
     bl_value = "***FIX ME***"
     # """
     if mode=="audio":
@@ -30,10 +32,11 @@ def create_merged(file_old, file_new, file_merged, mode="audio"):
     edit_word = False
     new_word = False
 
-    old_df = pd.read_csv(file_old, keep_default_na=False)
-    new_df = pd.read_csv(file_new, keep_default_na=False)
+    old_df = pd.read_csv(file_old, keep_default_na=False, engine='python')
+    new_df = pd.read_csv(file_new, keep_default_na=False, engine='python')
 
     merged_df = pd.DataFrame(columns = old_df.columns.values)
+
     #df = df.rename(columns={'oldName1': 'newName1'})
     for index, new_row in new_df.iterrows():
 
@@ -84,6 +87,7 @@ def create_merged(file_old, file_new, file_merged, mode="audio"):
                 merged_df = merged_df.append(to_add)
                 new_word = True
     # print(merged_df)
+    merged_df = merged_df.loc[:, ~merged_df.columns.str.contains('^Unnamed')]
     merged_df.to_csv(file_merged, index=False)
 
     return old_error, edit_word, new_word
@@ -98,72 +102,93 @@ if __name__ == "__main__":
     today = str(datetime.datetime.now().year)+"_" \
             + str(datetime.datetime.now().month)+"_" \
             + str(datetime.datetime.now().day)+"_"
-            
-        """
-        Do everything needed if only file by file
-        """
+
     # if only one file
-    if len(sys.argv) >= 4:
+    if len(sys.argv) >= 5:
         old = sys.argv[1]
         new = sys.argv[2]
         out = sys.argv[3]
-        if len(sys.argv)>=5:
-            mode = sys.argv[4]
+        # if len(sys.argv)>=5:
+        mode = sys.argv[4]
 
         if old and out and new:
             old_error, edit_word, new_word = create_merged(old, new, out, mode)
 
 
-    # if all files ## <4 because mode could be added
-    if len(sys.argv) >= 2 and len(sys.argv)<4:
-        home_visit_paths = sys.argv[1]
-        if len(sys.argv) > 2:
-            mode = sys.argv[2]
+    # if all files ## <=4 because mode could be added
+    if len(sys.argv) >= 2 and len(sys.argv)<=4:
+        in_folder = sys.argv[1]
+        out_folder = sys.argv[2]
+        mode = sys.argv[3]
 
-        with open(home_visit_paths, 'r') as f:
-            lines = f.readlines()
+        old_list = []
+        new_list = []
+        out_list = []
 
-        for line in lines:
-            print(line)
-            line = line.strip()
+        for csv_file in os.listdir(in_folder):
+            if csv_file.endswith("processed.csv"):
+                new_list.append(os.path.join(in_folder, csv_file))
+                sparse_code_name = csv_file[:5]+"_"+mode+"_sparse_code.csv"
+                old_list.append(os.path.join(in_folder, sparse_code_name))
+                out_list.append(os.path.join(out_folder, sparse_code_name))
+        old_list.sort()
+        new_list.sort()
+        out_list.sort()
 
-            # get name of old .csv file (with bl)+path to merged
-            # old_path = line+"/Analysis/Audio_Analysis/"
-            old_path = line+"/Analysis/Audio_Analysis/"
-            for csv_file in os.listdir(old_path):
-            # for csv_file in os.listdir(os.path.join(old_path, "old_files")):
-                if csv_file.endswith("audio_sparse_code.csv"):
-                # if csv_file.startswith("2019_1_8"): ## for one time fixing error
-                    move(os.path.join(old_path, csv_file), os.path.join(old_path, "old_files", today+csv_file))
-                    old = os.path.join(old_path, "old_files", today+csv_file)
-                    # old = os.path.join(old_path, "old_files", csv_file)
-                    out = os.path.join(old_path, csv_file)
-                    # out = os.path.join(old_path, csv_file[9:])
 
-            # get name of new .csv file (no bl)
-            new_path = line+"/Coding/Audio_Annotation/"
-            for csv_file in os.listdir(new_path):
-                if csv_file.endswith("processed.csv"):
-                    new = os.path.join(new_path, csv_file)
+        for old, new, out in zip(old_list, new_list, out_list):
+            old_error, edit_word, new_word = create_merged(old, new, out, mode)
 
-            # compute merge
-            if old and out and new:
-                old_error, edit_word, new_word = create_merged(old, new, out, mode)
-                if old_error:
-                    old_error_list.append(line)
-                if edit_word:
-                    edit_word_list.append(line)
-                if new_word:
-                    new_word_list.append(line)
 
-        # at the very end, write every error/change encountered
-        with open("annotid_merge_errors.txt", "w+") as f:
-            f.write("old_errors\n")
-            for l in old_error_list:
-                f.write(l+"\n")
-            f.write("edit_word\n")
-            for l in edit_word_list:
-                f.write(l+"\n")
-            f.write("new_word\n")
-            for l in new_word_list:
-                f.write(l+"\n")
+        ########################################################################
+        # home_visit_paths = sys.argv[1]
+        # if len(sys.argv) > 2:
+        #     mode = sys.argv[2]
+        #
+        # with open(home_visit_paths, 'r') as f:
+        #     lines = f.readlines()
+        #
+        # for line in lines:
+        #     print(line)
+        #     line = line.strip()
+        #
+        #     # get name of old .csv file (with bl)+path to merged
+        #     # old_path = line+"/Analysis/Audio_Analysis/"
+        #     old_path = line+"/Analysis/Audio_Analysis/"
+        #     for csv_file in os.listdir(old_path):
+        #     # for csv_file in os.listdir(os.path.join(old_path, "old_files")):
+        #         if csv_file.endswith("audio_sparse_code.csv"):
+        #         # if csv_file.startswith("2019_1_8"): ## for one time fixing error
+        #             move(os.path.join(old_path, csv_file), os.path.join(old_path, "old_files", today+csv_file))
+        #             old = os.path.join(old_path, "old_files", today+csv_file)
+        #             # old = os.path.join(old_path, "old_files", csv_file)
+        #             out = os.path.join(old_path, csv_file)
+        #             # out = os.path.join(old_path, csv_file[9:])
+        #
+        #     # get name of new .csv file (no bl)
+        #     new_path = line+"/Coding/Audio_Annotation/"
+        #     for csv_file in os.listdir(new_path):
+        #         if csv_file.endswith("processed.csv"):
+        #             new = os.path.join(new_path, csv_file)
+        #
+        #     # compute merge
+        #     if old and out and new:
+        #         old_error, edit_word, new_word = create_merged(old, new, out, mode)
+        #         if old_error:
+        #             old_error_list.append(line)
+        #         if edit_word:
+        #             edit_word_list.append(line)
+        #         if new_word:
+        #             new_word_list.append(line)
+        #
+        # # at the very end, write every error/change encountered
+        # with open("annotid_merge_errors.txt", "w+") as f:
+        #     f.write("old_errors\n")
+        #     for l in old_error_list:
+        #         f.write(l+"\n")
+        #     f.write("edit_word\n")
+        #     for l in edit_word_list:
+        #         f.write(l+"\n")
+        #     f.write("new_word\n")
+        #     for l in new_word_list:
+        #         f.write(l+"\n")
