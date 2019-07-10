@@ -1,3 +1,16 @@
+# Most recent Instructions
+## wordmerge2_annotid.py
+
+/!\\ FOR CHA/AUDIO for now
+
+### Usage
+
+`$ python wordmerge2_annotid.py path/to/old.csv path/to/new.csv path/to/output.csv audio`
+
+Merge old basic level with new; merge done on annotation ids.
+
+-- --
+#### The rest of the document needs to be updated.
 # wordmerge2
 
 This is a repo for wordmerge2 python script and its folder version that merges basic level from old file to new file in a newly-generated csv file.
@@ -72,16 +85,6 @@ $ python wordmerge2.py bl_file pho_file new_file_writeTo delta mark printLog -ph
 $ python wordmerge2.py old_folder new_folder -batch -pho
 ```
 
-
-## wordmerge2_annotid.py
-
-/!\\ FOR CHA/AUDIO for now
-
-### Usage
-
-`$ python wordmerge2_annotid.py path/to/old.csv path/to/new.csv path/to/output.csv`
-
-Merge old basic level with new; merge done on annotation ids.
 
 ## wordmerge2_add_id.py
 
